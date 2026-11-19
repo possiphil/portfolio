@@ -1,0 +1,56 @@
+---
+import displayFont from '../assets/fonts/instrument-serif.woff2?url';
+import { fullName, portfolio } from '../content/portfolio';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  notFound?: boolean;
+}
+
+const {
+  title = `${fullName} | ${portfolio.role}`,
+  description = portfolio.description,
+  notFound = false,
+} = Astro.props;
+const canonical = Astro.site && new URL(Astro.url.pathname, Astro.site).href;
+const socialImage = Astro.site && new URL('/social-card.jpg', Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en" id="top">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f7f6ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#171d18" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin="anonymous" />
+    <slot name="preload" />
+    {notFound ? <meta name="robots" content="noindex" /> : (
+      <>
+        {canonical && <link rel="canonical" href={canonical} />}
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content={fullName} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        {canonical && <meta property="og:url" content={canonical} />}
+        {socialImage && (
+          <>
+            <meta property="og:image" content={socialImage} />
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="630" />
+            <meta property="og:image:alt" content={`${fullName}, ${portfolio.role}, beside a topographic terrain illustration.`} />
+          </>
+        )}
+      </>
+    )}
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

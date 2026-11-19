@@ -1,0 +1,12 @@
+---
+import { fullName } from '../content/portfolio';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title={`Page not found | ${fullName}`} description="This page could not be found." notFound>
+  <main class="shell missing-page">
+    <p class="eyebrow">404</p>
+    <h1>Page not found</h1>
+    <a class="button button-primary" href="/">Return to portfolio</a>
+  </main>
+</BaseLayout>

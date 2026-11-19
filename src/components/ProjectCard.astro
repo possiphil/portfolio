@@ -1,0 +1,29 @@
+---
+import type { projects } from '../content/portfolio';
+
+interface Props {
+  project: (typeof projects)[number];
+}
+
+const { project } = Astro.props;
+---
+
+<article class="project" id={project.id} aria-labelledby={`${project.id}-title`}>
+  <div class="project-cover">
+    <p class="eyebrow">{project.context}</p>
+    <h3 id={`${project.id}-title`}>{project.name}</h3>
+    <p class="project-title">{project.title}</p>
+  </div>
+  <div class="project-body">
+    <p>{project.description}</p>
+    <dl class="details">
+      {project.details.map(({ label, value }) => (
+        <div>
+          <dt>{label}</dt>
+          <dd>{value}</dd>
+        </div>
+      ))}
+    </dl>
+    {project.url && <a class="inline-link" href={project.url}>Explore {project.name}</a>}
+  </div>
+</article>

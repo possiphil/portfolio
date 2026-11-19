@@ -1,0 +1,117 @@
+---
+import { Image } from 'astro:assets';
+import italicFont from '../assets/fonts/instrument-serif-italic.woff2?url';
+import terrain from '../assets/terrain-study.webp';
+import GitHubMark from '../components/GitHubMark.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { fullName, portfolio, projects } from '../content/portfolio';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const navigation = [
+  { id: 'about', label: 'About' },
+  { id: 'work', label: 'Work' },
+  { id: 'background', label: 'Background' },
+  { id: 'contact', label: 'Contact' },
+];
+---
+
+<BaseLayout>
+  <link slot="preload" rel="preload" href={italicFont} as="font" type="font/woff2" crossorigin="anonymous" />
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header shell">
+    <a class="brand" href="#top">
+      <span class="monogram" aria-hidden="true">{portfolio.initials}</span>
+      <span>{fullName}</span>
+    </a>
+    <nav aria-label="Main navigation">
+      <ul>
+        {navigation.map(({ id, label }) => <li><a href={`#${id}`}>{label}</a></li>)}
+      </ul>
+    </nav>
+  </header>
+
+  <main class="shell" id="main" tabindex="-1">
+    <section class="hero" aria-labelledby="intro-heading">
+      <div class="hero-copy">
+        <p class="eyebrow">{portfolio.role}</p>
+        <h1 id="intro-heading">{portfolio.firstName} <em>{portfolio.lastName}</em></h1>
+        <p class="hero-intro">{portfolio.introduction}</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#work">View selected work</a>
+          <a class="button button-secondary" href={portfolio.github.url}><GitHubMark /> GitHub</a>
+        </div>
+      </div>
+      <figure class="terrain">
+        <Image
+          src={terrain}
+          alt=""
+          widths={[420, 640, 840, 1040]}
+          sizes="(max-width: 40rem) calc(100vw - 2.5rem), (max-width: 80rem) 40vw, 32rem"
+          format="webp"
+          loading="eager"
+          fetchpriority="high"
+        />
+        <figcaption><span>Procedural terrain</span><span>Concept illustration</span></figcaption>
+      </figure>
+    </section>
+
+    <section class="section split" id="about" aria-labelledby="about-heading">
+      <div>
+        <p class="eyebrow">About</p>
+        <h2 id="about-heading">{portfolio.about.heading}</h2>
+      </div>
+      <div class="prose">
+        {portfolio.about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+    </section>
+
+    <section class="section" id="work" aria-labelledby="work-heading">
+      <h2 class="section-title" id="work-heading">Selected work</h2>
+      <div class="project-list">
+        {projects.map((project) => <ProjectCard project={project} />)}
+      </div>
+    </section>
+
+    <section class="section background" id="background" aria-labelledby="background-heading">
+      <h2 class="section-title" id="background-heading">Background</h2>
+      <div class="background-grid">
+        <div>
+          <h3 class="eyebrow">Education</h3>
+          <ul class="education" role="list">
+            {portfolio.education.map(({ degree, institutions, program, date, dateTime }) => (
+              <li>
+                <time datetime={dateTime}>{date}</time>
+                <h4>{degree}</h4>
+                {program && <p>{program}</p>}
+                <p>{institutions}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="technical">
+          <h3 class="eyebrow">Technical areas</h3>
+          <dl class="details">
+            {portfolio.technicalAreas.map(({ label, value }) => (
+              <div><dt>{label}</dt><dd>{value}</dd></div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact" aria-labelledby="contact-heading">
+      <div>
+        <h2 id="contact-heading">Find me on GitHub.</h2>
+        <p>{portfolio.contact}</p>
+      </div>
+      <a class="button button-primary" href={portfolio.github.url}>
+        <GitHubMark /><span>@{portfolio.github.handle}</span>
+      </a>
+    </section>
+  </main>
+
+  <footer class="site-footer shell">
+    <span>{fullName}</span>
+    <a class="inline-link" href="#top">Back to top</a>
+  </footer>
+</BaseLayout>
