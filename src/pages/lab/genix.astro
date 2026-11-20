@@ -1,0 +1,25 @@
+---
+import Explorer from '../../components/genix-explorer/Explorer.astro';
+import sans from '../../assets/fonts/instrument-sans.woff2?url';
+import serif from '../../assets/fonts/instrument-serif.woff2?url';
+import '../../components/genix-explorer/explorer.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#151310" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="noindex" />
+    <title>Genix | Architecture Explorer</title>
+    <meta name="description" content="An interactive semantic zoom prototype for exploring software architecture." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={sans} as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href={serif} as="font" type="font/woff2" crossorigin="anonymous" />
+  </head>
+  <body class="gx-page">
+    <Explorer />
+  </body>
+</html>
