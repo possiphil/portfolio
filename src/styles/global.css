@@ -14,6 +14,19 @@
   font-display: swap;
 }
 
+/* Match the headline width while the display font downloads. */
+@font-face {
+  font-family: 'Display Fallback';
+  src: local('Georgia'), local('Noto Serif');
+  size-adjust: 77%;
+}
+
+@font-face {
+  font-family: 'Display Fallback Times';
+  src: local('Times New Roman'), local('Liberation Serif');
+  size-adjust: 86%;
+}
+
 :root {
   color-scheme: dark;
   --page: #17171c;
@@ -30,7 +43,7 @@
   --contact: #c9bfd8;
   --contact-ink: #292332;
   --contact-muted: #4b4057;
-  --display: 'Instrument Serif', Georgia, serif;
+  --display: 'Instrument Serif', 'Display Fallback', 'Display Fallback Times', serif;
   --sans: 'Instrument Sans', system-ui, sans-serif;
   --gutter: clamp(1rem, 4.4vw, 5.5rem);
   --header-height: 4.75rem;
@@ -63,6 +76,7 @@ main { overflow: clip; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 h1, h2, h3, p, figure, ul, dl, dd { margin: 0; }
 a { color: inherit; }
+a, button, summary { -webkit-tap-highlight-color: color-mix(in srgb, var(--accent) 22%, transparent); }
 img { display: block; max-inline-size: 100%; }
 [hidden] { display: none !important; }
 
