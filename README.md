@@ -1,6 +1,6 @@
 # Philipp Sanktjohanser’s portfolio
 
-A single-page portfolio built with Astro and TypeScript. The production build is static HTML and CSS with self-hosted fonts, responsive images, and no client-side JavaScript. The appearance follows the visitor’s system color scheme.
+A single-page portfolio built with Astro and TypeScript. The production build is static HTML and CSS with self-hosted fonts, responsive images, and a small script for the persistent theme toggle and section navigation. The default palette is dark, and the opening respects the visitor’s reduced-motion preference.
 
 ## Local development
 
@@ -24,8 +24,9 @@ npm run preview
 ## Customization
 
 - Edit `src/content/portfolio.ts` for the introduction, biography, education, technical areas, GitHub profile, and SEO description. Add another entry to `projects` to create another project card. Use a unique `id` and add an optional `url` when the project has a public page.
-- Edit `src/styles/global.css` for typography, layout, colors, and the light and dark palettes. The self-hosted Instrument Serif fonts and their OFL license are in `src/assets/fonts/`.
-- `src/assets/terrain-study.webp` is a conceptual illustration. You can replace it with other artwork or a public Genix screenshot and update the caption in `src/pages/index.astro`.
+- Edit `src/styles/global.css` for typography, layout, colors, and the light and dark palettes. The self-hosted Instrument Sans and Instrument Serif fonts and their OFL licenses are in `src/assets/fonts/`.
+- Replace `src/assets/portrait.webp` to update the About portrait. The section also works with that file removed.
+- `src/assets/engraving.webp` is the transparent linework used for the hero reveal. `src/assets/terrain-study.webp` is a conceptual illustration for Genix. Update its caption in `src/components/ProjectCard.astro` if the artwork changes.
 - Update `public/favicon.svg` and the 1200 × 630 `public/social-card.jpg` if the identity or illustration changes.
 
 ## Cloudflare Pages
