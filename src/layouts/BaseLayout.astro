@@ -28,7 +28,7 @@ const socialImage = Astro.site && new URL('/social-card.jpg', Astro.site).href;
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="color-scheme" content="dark light" />
-    <meta name="theme-color" content="#161513" />
+    <meta name="theme-color" content="#17171c" />
     <script define:vars={{ intro }}>
       const root = document.documentElement;
 
@@ -36,7 +36,7 @@ const socialImage = Astro.site && new URL('/social-card.jpg', Astro.site).href;
       try {
         if (localStorage.getItem('portfolio-theme') === 'light') {
           root.dataset.theme = 'light';
-          document.querySelector('meta[name="theme-color"]').content = '#f3f0eb';
+          document.querySelector('meta[name="theme-color"]').content = '#f5f3ee';
         }
       } catch {
         // The default palette also works when storage is unavailable.
@@ -44,12 +44,12 @@ const socialImage = Astro.site && new URL('/social-card.jpg', Astro.site).href;
 
       if (intro && !location.hash && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
         try {
-          if (!sessionStorage.getItem('portfolio-intro')) {
-            sessionStorage.setItem('portfolio-intro', 'seen');
+          if (!localStorage.getItem('portfolio-portrait-intro')) {
+            localStorage.setItem('portfolio-portrait-intro', 'seen');
             root.dataset.intro = '';
           }
         } catch {
-          root.dataset.intro = '';
+          // Show the steady-state hero when repeat visits cannot be detected.
         }
       }
     </script>
@@ -69,7 +69,7 @@ const socialImage = Astro.site && new URL('/social-card.jpg', Astro.site).href;
             <meta property="og:image" content={socialImage} />
             <meta property="og:image:width" content="1200" />
             <meta property="og:image:height" content="630" />
-            <meta property="og:image:alt" content={`${fullName}, ${portfolio.role}, beside a copper line engraving.`} />
+            <meta property="og:image:alt" content={`${fullName}, ${portfolio.role}, with a monochrome portrait.`} />
           </>
         )}
       </>
