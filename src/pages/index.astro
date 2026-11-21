@@ -1,125 +1,157 @@
 ---
 import { Image } from 'astro:assets';
-import Icon from '../components/Icon.astro';
-import ProjectCard from '../components/ProjectCard.astro';
-import { contact, media } from '../content/media';
-import { fullName, portfolio, projects } from '../content/portfolio';
-import BaseLayout from '../layouts/BaseLayout.astro';
-import '../styles/home.css';
+import Sigil from '../components/studio/Sigil.astro';
+import { site } from '../content/site';
+import StudioLayout from '../layouts/StudioLayout.astro';
 
-const words = portfolio.about.statement.split(' ');
-const emphasisStart = words.length - portfolio.about.emphasis.split(' ').length;
+const { header, hero, about, reel, focus, education, projects, skills, profile, contact } = site;
+const contactHref = contact.email ? `mailto:${contact.email}` : contact.primary.href;
+const contactLabel = contact.email || contact.primary.label;
+const pad = (n: number) => String(n + 1).padStart(2, '0');
 ---
 
-<BaseLayout>
-  <div class="entry-curtain" aria-hidden="true"><span>PS<i>.</i></span></div>
+<StudioLayout>
+  <div class="loader" data-loader aria-hidden="true"><span class="loader-dot"></span></div>
+  <canvas class="gl-canvas" data-gl-canvas aria-hidden="true"></canvas>
 
-  <main id="main" tabindex="-1">
-    <div class="arrival">
-      <section class="hero" aria-labelledby="intro-heading" data-hero>
-        <figure class="hero-portrait">
-          <div class="portrait-depth">
-            <Image src={media.portrait.image} alt={media.portrait.alt}
-              widths={[360, 560, 800, 1000]} sizes="(max-width: 52rem) 100vw, 65vw"
-              format="webp" quality={86} loading="eager" fetchpriority="high" />
+  <header class="hd grid">
+    <a class="hd-logo" href="#top" aria-label="Back to top"><Sigil /></a>
+    <p class="hd-name label" data-hd-fade><span data-scramble>{site.name.first}</span><br /><span data-scramble>{site.name.last}</span></p>
+    <p class="hd-tag label" data-hd-fade>{header.tagline.map((line, i) => <>{i > 0 && <br />}<span data-scramble>{line}</span></>)}</p>
+    <a class="hd-cta label" href={header.cta.href} data-scramble-hover>{header.cta.label}</a>
+  </header>
+
+  <main id="top">
+    <!-- /01 Hero -->
+    <section class="hero grid" data-hero data-gl-atmos="hero">
+      <h1 class="visually-hidden">{site.name.first} {site.name.last}</h1>
+      <p class="hero-word giant" data-gl-text data-fit data-reveal="intro" aria-hidden="true">{site.heroWord}</p>
+      <p class="hero-lines label">{hero.lines.map((line, i) => <>{i > 0 && <br />}<span data-scramble>{line}</span></>)}</p>
+      <span class="hero-hint label">{hero.hint}</span>
+      <span class="hero-index label">/01</span>
+    </section>
+
+    <!-- /02 About + reel -->
+    <section class="about" id="about">
+      <div class="row grid">
+        <span class="label col-index" data-scramble-in>{about.index}</span>
+        <span class="label col-name" data-scramble-in>{about.label}</span>
+        <span class="label col-aside" data-scramble-in>{about.aside.map((line, i) => <>{i > 0 && <br />}{line}</>)}</span>
+      </div>
+      <p class="statement" data-words>{about.statement}</p>
+
+      <div class="reel-wrap grid">
+        <span class="label reel-label">{reel.label.map((line, i) => <>{i > 0 && <br />}{line}</>)}</span>
+        <a class="reel" href={reel.link.href} target="_blank" rel="noopener" data-cursor={reel.link.label}>
+          <figure class="reel-media" data-gl-media data-variant="crt">
+            <Image src={reel.image.src} alt={reel.image.alt} widths={[800, 1400, 2000]} sizes="90vw" format="webp" quality={80} loading="eager" />
+          </figure>
+          <span class="reel-caption" data-type>{reel.caption.map((line, i) => <>{i > 0 && <br />}{line}</>)}</span>
+          <span class="reel-play label"><span data-scramble-hover>{reel.link.label}</span></span>
+        </a>
+      </div>
+
+      <div class="row focus grid">
+        <span class="label col-index" data-scramble-in>{focus.index}</span>
+        <span class="label col-name" data-scramble-in>{focus.label}</span>
+        <div class="focus-copy">{focus.paragraphs.map((p) => <p data-lines>{p}</p>)}</div>
+      </div>
+
+      <div class="row edu grid">
+        <span class="label col-name" data-scramble-in>{education.label}</span>
+        <ul class="edu-list">
+          {education.rows.map((row) => (
+            <li class="edu-row" data-row>
+              <span class="label">{row.title}</span>
+              <span class="label edu-detail">{row.detail}</span>
+              <span class="label edu-value">{row.value}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- /03 Projects -->
+    <section class="projects" id="projects" aria-label={site.projectsLabel}>
+      {projects.map((project, i) => (
+        <article class="case" data-case>
+          <div class="case-media" data-parallax {...(project.cover
+            ? { 'data-gl-media': '' }
+            : { 'data-gl-atmos': 'case', 'data-hue': project.hue ?? 190, style: `--hue:${project.hue ?? 190}` })}>
+            {project.cover && <Image src={project.cover.src} alt={project.cover.alt} widths={[960, 1600, 2400]} sizes="100vw" format="webp" quality={80} />}
           </div>
+          <h2 class="case-title giant" data-gl-text data-fit data-reveal="scroll">{project.title}</h2>
+          <span class="case-index label">{pad(i)} / {pad(projects.length - 1)}</span>
+          {project.thumbs && (
+            <div class="case-thumbs" aria-hidden="true">
+              {project.thumbs.map((thumb) => (
+                <figure class="case-thumb" data-gl-media data-variant="thumb">
+                  <Image src={thumb.src} alt="" widths={[240, 480]} sizes="12vw" format="webp" quality={70} />
+                </figure>
+              ))}
+            </div>
+          )}
+          <div class="case-meta grid">
+            <p class="label"><span class="dim">Type</span> {project.type}</p>
+            <p class="label"><span class="dim">Year</span> {project.year}</p>
+            <p class="label"><span class="dim">Stack</span> {project.stack}</p>
+            {project.link && <a class="label case-link" href={project.link.href} data-scramble-hover>{project.link.label}</a>}
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <!-- /04 Skills -->
+    <section class="skills" id="skills" data-gl-atmos="spot">
+      <div class="row grid">
+        <span class="label col-index" data-scramble-in>{skills.label}</span>
+        <span class="label col-name" data-scramble-in>{skills.aside}</span>
+        <span class="label col-end" data-scramble-in>{skills.index}</span>
+      </div>
+      <ul class="skills-list">
+        {skills.items.map((item) => <li class="skill giant" data-gl-text data-fit-max="1.0" data-reveal="scroll" data-grain>{item}</li>)}
+      </ul>
+    </section>
+
+    <!-- /05 Profile -->
+    <section class="profile" id="profile">
+      <div class="row grid">
+        <span class="label col-index" data-scramble-in>{profile.index}</span>
+        <span class="label col-name" data-scramble-in>{site.name.last}</span>
+        <span class="label col-end" data-scramble-in>{profile.label}</span>
+      </div>
+      <p class="statement" data-words>{profile.statement}</p>
+      <div class="profile-stage">
+        <figure class="profile-media" data-gl-media data-variant="smear">
+          <Image src={profile.portrait.src} alt={profile.portrait.alt} widths={[800, 1400, 2000]} sizes="100vw" format="webp" quality={80} />
         </figure>
-        <div class="hero-layout shell">
-          <div class="hero-copy">
-            <p class="eyebrow hero-role">{portfolio.role}</p>
-            <h1 class="hero-name" id="intro-heading">
-              <span class="name-first"><span>{portfolio.firstName}</span></span>
-              <span class="name-last"><span>{portfolio.lastName}</span></span>
-            </h1>
-            <div class="hero-lede">
-              <p>{portfolio.introduction}</p>
-              <a class="editorial-link explore-link" href="#work" data-scroll-link>Explore work <Icon name="arrow-down" /></a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="work-section" id="work" aria-labelledby="work-heading" tabindex="-1">
-        <div class="shell">
-          <h2 class="display-heading" id="work-heading">Selected <em>work</em></h2>
-          <div class="work-grid" data-reveal-group>
-            {projects.map((project) => <ProjectCard project={project} />)}
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <section class="about-section" id="about" aria-labelledby="about-heading" tabindex="-1">
-      <div class="shell section-layout">
-        <p class="eyebrow section-kicker">About</p>
-        <div>
-          <h2 class="about-heading display-heading" id="about-heading" aria-label={portfolio.about.statement} data-reveal-group>
-            {words.map((word, index) => (
-              <Fragment><span class:list={['about-word', { emphasize: index >= emphasisStart }]}
-                style={{ '--reveal-order': index }} aria-hidden="true">{word}</span>{' '}</Fragment>
-            ))}
-          </h2>
-          <p class="about-copy">{portfolio.about.paragraph}</p>
-          <dl class="toolkit">
-            {portfolio.technicalAreas.map(({ label, items }) => (
-              <div>
-                <dt>{label}</dt>
-                <dd><ul role="list">{items.map((item) => <li>{item}</li>)}</ul></dd>
-              </div>
-            ))}
-          </dl>
-        </div>
+        {profile.tags.map((tag, i) => <span class={`profile-tag label tag-${i}`} data-scramble-in>{tag}</span>)}
       </div>
     </section>
 
-    <section class="education-section shell section-layout" id="education" aria-labelledby="education-heading">
-      <div>
-        <h2 class="eyebrow section-kicker" id="education-heading">Education</h2>
+    <!-- /06 Contact -->
+    <footer class="contact" id="contact">
+      <div class="row grid">
+        <span class="label col-index" data-scramble-in>{contact.index}</span>
+        <span class="label col-name" data-scramble-in>{contact.label}</span>
+        <span class="label col-end" data-scramble-in>{site.name.last}</span>
       </div>
-      <ol class="timeline" data-timeline role="list">
-        {portfolio.education.map(({ degree, institutions, program, date, dateTime }) => (
-          <li data-milestone>
-            <span class="timeline-dot" aria-hidden="true"></span>
-            <div class="milestone-copy">
-              {dateTime
-                ? <time class="eyebrow" datetime={dateTime}>{date}</time>
-                : <p class="eyebrow">{date}</p>}
-              <h3>{degree}</h3>
-              {program && <p class="program">{program}</p>}
-              <p class="institutions">{institutions}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
-    </section>
-
-    <section class="contact-section" id="contact" aria-labelledby="contact-heading" tabindex="-1">
-      <div class="contact-layout shell">
-        <p class="eyebrow">Contact</p>
-        <h2 class="display-heading" id="contact-heading">{portfolio.contact}</h2>
-        <div class="contact-primary">
-          {contact.email
-            ? <a class="copper-pill" href={`mailto:${contact.email}`}>Email me</a>
-            : <button class="copper-pill" type="button" disabled aria-describedby="email-status">Email me</button>}
-          {!contact.email && <p class="pending-note" id="email-status">Email address pending</p>}
-        </div>
-        <div class="contact-links">
-          <a class="editorial-link" href={contact.github}>GitHub <Icon name="arrow-up-right" /></a>
-          <span aria-hidden="true">·</span>
-          {contact.linkedin
-            ? <a class="editorial-link" href={contact.linkedin}>LinkedIn <Icon name="arrow-up-right" /></a>
-            : <span class="editorial-link pending" role="link" aria-disabled="true" title="LinkedIn URL pending">LinkedIn <Icon name="arrow-up-right" /><span class="sr-only"> (URL pending)</span></span>}
-        </div>
+      <p class="contact-lines" data-lines>{contact.lines.map((line) => <span>{line}</span>)}</p>
+      <div class="contact-mail grid">
+        <span class="contact-e">{contact.email ? 'E:' : '→'}</span>
+        <a href={contactHref} data-underline>{contactLabel}</a>
       </div>
-    </section>
+      <div class="contact-nav grid">
+        <a class="contact-logo" href="#top" aria-label="Back to top"><Sigil /></a>
+        <ul class="label">{contact.nav.map((item) => <li><a href={item.href} data-scramble-hover>{item.label}</a></li>)}</ul>
+        <ul class="label">{contact.socials.map((item) => <li><a href={item.href} target="_blank" rel="noopener" data-scramble-hover>{item.label}</a></li>)}</ul>
+      </div>
+      <p class="footer-word giant" data-gl-text data-fit data-reveal="scroll" data-grain aria-hidden="true">{site.footerWord}</p>
+      <div class="credits grid label">
+        {contact.credits.map((c) => <span>{c}</span>)}
+        <span>©{site.name.last} {new Date().getFullYear()}</span>
+        <a href="#top" data-scramble-hover>Back to top</a>
+      </div>
+    </footer>
   </main>
-
-  <footer class="site-footer shell">
-    <span>{fullName}</span>
-    <a class="editorial-link" href="/" data-home>Back to top <Icon name="arrow-up" /></a>
-  </footer>
-
-  <script>
-    import '../scripts/home';
-  </script>
-</BaseLayout>
+</StudioLayout>

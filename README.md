@@ -2,6 +2,15 @@
 
 A static Astro and TypeScript portfolio prototype for Philipp Sanktjohanser. Phase 1 includes the complete homepage and the Genix case study. The approved [design spec](docs/design-spec.md) and [implementation brief](docs/codex-prompt.md) are in `docs/`.
 
+## Propagande-style homepage (this branch)
+
+The homepage on `feature/propagande-variant` is a one-page CV after [propagande.studio](https://propagande.studio). Its stack is the same as the original's: Three.js, GSAP (ScrollTrigger, SplitText, ScrambleText) and Lenis. Nuxt is replaced by Astro.
+
+- **Content:** [`src/content/site.ts`](src/content/site.ts) holds every text, link and image on the homepage. Entries still waiting for real content are marked `TODO`.
+- **WebGL stage:** [`src/scripts/studio/gl/stage.ts`](src/scripts/studio/gl/stage.ts) uses a single fixed canvas whose planes follow DOM elements tagged `data-gl-atmos`, `data-gl-text` or `data-gl-media`. The effects themselves are in [`shaders.ts`](src/scripts/studio/gl/shaders.ts): the dithered atmosphere, the pixel-dissolve type, the CRT screen and the motion-smear portrait.
+- **Motion:** [`src/scripts/studio/main.ts`](src/scripts/studio/main.ts) runs the loader, the intro and all scroll scenes. With reduced motion, the loader and smooth scrolling are skipped. Without WebGL, the plain DOM version is shown.
+- **Styles:** [`src/styles/studio.css`](src/styles/studio.css) defines the 12-column grid, labels and giant type, set in Inter Tight, a free stand-in for the original's commercial typeface.
+
 ## Run locally
 
 Use Node.js 22.23.4 or newer. The repository records the minimum tested version in `.node-version`.

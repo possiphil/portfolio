@@ -1,0 +1,45 @@
+---
+import interTight from '@fontsource-variable/inter-tight/files/inter-tight-latin-wght-normal.woff2?url';
+import { site } from '../content/site';
+import '../styles/studio.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = site.meta.title, description = site.meta.description } = Astro.props;
+const canonical = Astro.site && new URL(Astro.url.pathname, Astro.site).href;
+const socialImage = Astro.site && new URL('/social-card.jpg', Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en" class="is-loading">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={interTight} as="font" type="font/woff2" crossorigin="anonymous" />
+    <style is:inline set:html={`@font-face{font-family:'Inter Tight';src:url(${interTight}) format('woff2');font-weight:100 900;font-display:block}`}></style>
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('reduced-motion');
+      history.scrollRestoration = 'manual';
+    </script>
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {socialImage && <meta property="og:image" content={socialImage} />}
+  </head>
+  <body>
+    <slot />
+    <script>
+      import '../scripts/studio/main';
+    </script>
+  </body>
+</html>
