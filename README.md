@@ -1,5 +1,7 @@
 # sanktjohanser.dev
 
+> **Branch `feature/snellenberg-variant`:** the homepage on this branch is an experimental variant modelled on the layout and interactions of dennissnellenberg.com (greeting preloader, scrolling name marquee, magnetic buttons, hover preview in the work list, side menu, curved footer). It uses only this portfolio's own content, images and fonts. Edit copy, colors, links and project images in [src/content/variant.ts](src/content/variant.ts); styles are in [src/styles/variant.css](src/styles/variant.css) and behaviour in [src/scripts/variant.ts](src/scripts/variant.ts). The Genix case study at `/work/genix` is unchanged.
+
 A static Astro and TypeScript portfolio prototype for Philipp Sanktjohanser. Phase 1 includes the complete homepage and the Genix case study. The approved [design spec](docs/design-spec.md) and [implementation brief](docs/codex-prompt.md) are in `docs/`.
 
 ## Run locally
