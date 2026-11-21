@@ -1,39 +1,42 @@
-# sanktjohanser.dev
+# sanktjohanser.dev — CV variant (`feature/anerow-variant`)
 
-A static Astro and TypeScript portfolio prototype for Philipp Sanktjohanser. Phase 1 includes the complete homepage and the Genix case study. The approved [design spec](docs/design-spec.md) and [implementation brief](docs/codex-prompt.md) are in `docs/`.
+A personal CV site. Layout, motion and visual language follow [a-nerow.fr](https://www.a-nerow.fr/), rebuilt from scratch on the same kind of stack:
 
-## Run locally
+| | |
+| --- | --- |
+| Framework | Next.js 16 (App Router, static export) · React 19 · TypeScript |
+| Styling | Tailwind CSS v4 (tokens in `app/globals.css`) |
+| Motion | Framer Motion (reveals, 3D portrait tilt, timeline fill, header, floating CTA) · GSAP ScrollTrigger (pinned horizontal project track) · CSS keyframes (hero entrance, marquee) |
+| Fonts | Outfit (text), Syne (wordmark), JetBrains Mono (labels/code), served via `next/font` |
+| Icons | lucide-react, brand logos from simple-icons (inlined at build time) |
+| Hosting | Cloudflare Worker static assets (`wrangler.jsonc` → `./out`) |
 
-Use Node.js 22.23.4 or newer. The repository records the minimum tested version in `.node-version`.
+## Personalise
+
+Almost everything lives in **[`content/site.ts`](content/site.ts)**:
+
+- `profile`: name, monogram (`PS.`), email, CV path, hero image + layout (`portrait` or `wide`)
+- `socials`: only entries with a URL are rendered (LinkedIn is still a `TODO`)
+- `marquee`: the tech pills under the hero (slug = [simpleicons.org](https://simpleicons.org) name)
+- `stack`: the `stack.ts` code window
+- `projects`: cards in the horizontal track (image or video cover, status, tags)
+- `dictionaries.en` / `dictionaries.de`: all copy, in English (`/`) and German (`/de`)
+
+Search for `TODO` to find placeholders: email, LinkedIn, location/languages, the three unfinished project descriptions, the "what am I looking for" FAQ, and the CV PDF (`public/Philipp-Sanktjohanser-CV.pdf`).
+
+To change the accent colour, edit `--accent-*` at the top of `app/globals.css`.
+
+## Run
 
 ```sh
 npm ci
-npm run dev
+npm run dev        # http://localhost:3000
+npm run build      # static export to ./out
+npm run preview    # serve ./out through wrangler, same as production
 ```
 
-Open the Local URL printed by Astro. Use `/` for the homepage and `/work/genix` for the case study, including on a fresh page load.
+The contact form is static: it opens the visitor's mail app with the message pre-filled. To receive messages directly, point `components/ContactForm.tsx` at a form service or a Worker route.
 
-```sh
-npm run check
-npm run build
-npm run preview
-```
+## Deploy
 
-`preview` serves the production output in `dist/`. The existing Wrangler configuration serves that same directory as Cloudflare Worker static assets. Set `SITE_URL` at build time if a different origin should appear in canonical and social metadata.
-
-## Content and assets
-
-- [Portfolio content](src/content/portfolio.ts) controls the homepage, featured gallery, and case studies. A project with a `study` entry gets a dedicated route. The next-project teaser appears when a subsequent case study exists.
-- [Media manifest](src/content/media.ts) holds the portrait, Genix image/video slots, résumé, and contact endpoints. See the [asset checklist](docs/asset-checklist.md) for missing inputs and where to add them.
-- Instrument Serif and Instrument Sans are self-hosted with OFL licenses in [the font directory](src/assets/fonts).
-
-The homepage curtain is session-scoped. Same-origin cross-document View Transitions supply the gallery image expansion and its reverse where supported. Regular document navigation, native history, and direct case-study URLs remain available independently. Reduced motion skips the animated effects. Without JavaScript, the homepage links, chapter anchors, and links to original images remain usable.
-
-## Background atmosphere
-
-Tune the glow, grain, and print pattern independently for each theme at the top of [atmosphere.css](src/styles/atmosphere.css). Use `0%` to disable the glow or pattern and `0` to disable the grain. In the browser console, switch the whole treatment off or back on without reloading.
-
-```js
-document.documentElement.dataset.atmosphere = 'off';
-delete document.documentElement.dataset.atmosphere;
-```
+Cloudflare Workers Builds is connected to the GitHub repo, so every pushed branch gets a preview URL under the `portfolio` worker. The build has to run `npm run build`, and the deploy step serves `./out` (see `wrangler.jsonc`).

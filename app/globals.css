@@ -1,0 +1,271 @@
+@import 'tailwindcss';
+
+/* ─── Design tokens ──────────────────────────────────────────────
+   Change the accent by editing --accent-* below. Everything else
+   (buttons, dots, highlights, scrollbar, selection) follows. */
+:root {
+  --accent-300: #ffd76b;
+  --accent-400: #ffca2b;
+  --accent-950: #271700;
+
+  --n-50: #fff9f1;
+  --n-100: #f1ece4;
+  --n-200: #dfdad2;
+  --n-400: #a9a6a1;
+  --n-500: #8e8c87;
+  --n-850: #282622;
+  --n-900: #1c1a17;
+  --n-925: #151310;
+  --n-950: #0c0a08;
+
+  --primary: var(--accent-400);
+  --primary-hover: var(--accent-300);
+  --on-primary: var(--n-950);
+  --primary-glow: rgba(255, 202, 43, 0.25);
+
+  --background: var(--n-950);
+  --surface: var(--n-925);
+  --surface-2: var(--n-900);
+  --line: var(--n-850);
+  --foreground: var(--n-100);
+  --muted: var(--n-400);
+  --faint: var(--n-500);
+
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+
+  --font-sans: var(--font-outfit), system-ui, sans-serif;
+  --font-display: var(--font-syne), var(--font-outfit), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --animate-marquee: marquee var(--loop, 40s) linear infinite;
+}
+
+/* ─── Base ───────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 3px;
+}
+
+:where(a, button, summary, [role='button']):focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Keyframes ──────────────────────────────────────────────── */
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-mask {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.hero-rise {
+  animation: hero-rise 0.8s var(--ease-expo) both;
+}
+.hero-mask {
+  animation: hero-mask 0.6s var(--ease-expo) both;
+}
+
+.marquee-paused .animate-marquee {
+  animation-play-state: paused;
+}
+
+/* ─── Background aura ────────────────────────────────────────── */
+.aura {
+  position: absolute;
+  inset: -25%;
+  background: radial-gradient(
+    closest-side,
+    var(--primary) 0%,
+    var(--primary) 28%,
+    color-mix(in srgb, var(--primary) 60%, transparent) 50%,
+    color-mix(in srgb, var(--primary) 22%, transparent) 72%,
+    transparent 100%
+  );
+  opacity: 0.07;
+}
+
+/* ─── Surfaces ───────────────────────────────────────────────── */
+.pill-surface {
+  border: 1px solid rgba(241, 236, 228, 0.075);
+  background: linear-gradient(180deg, rgba(241, 236, 228, 0.055), rgba(241, 236, 228, 0.012) 62%);
+  box-shadow:
+    inset 0 1px 0 rgba(241, 236, 228, 0.06),
+    0 12px 24px -16px rgba(0, 0, 0, 0.9);
+}
+
+.surface-card {
+  position: relative;
+  border: 1px solid var(--line);
+  background: rgba(21, 19, 16, 0.72);
+  transition:
+    border-color 0.2s var(--ease-premium),
+    background-color 0.2s var(--ease-premium);
+}
+.surface-card:hover {
+  background: var(--surface);
+  border-color: rgba(241, 236, 228, 0.16);
+}
+
+.glass-dark {
+  background: rgba(241, 236, 228, 0.04);
+  border: 1px solid rgba(241, 236, 228, 0.08);
+}
+
+.pillar-sheen {
+  background: radial-gradient(90% 140% at 28% 0, rgba(255, 202, 43, 0.13), transparent 62%);
+  border: 1px solid rgba(255, 214, 140, 0.3);
+  box-shadow: inset 0 1px rgba(255, 226, 170, 0.5);
+  mask-image: radial-gradient(130% 120% at 18% 0, #000 28%, transparent 78%);
+}
+
+.input-dark {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--foreground);
+  transition:
+    border-color 0.3s var(--ease-premium),
+    box-shadow 0.3s var(--ease-premium),
+    background 0.3s var(--ease-premium);
+}
+.input-dark:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+  background: rgba(241, 236, 228, 0.04);
+  outline: none;
+}
+.input-dark::placeholder {
+  color: rgba(241, 236, 228, 0.45);
+}
+
+/* ─── Portrait card (3D tilt) ────────────────────────────────── */
+.card-shadow {
+  position: absolute;
+  inset: 9% 7% -2% 9%;
+  border-radius: 2rem;
+  background: rgba(0, 0, 0, 0.78);
+  filter: blur(28px);
+  will-change: transform;
+}
+.card-light {
+  background: linear-gradient(
+    142deg,
+    rgba(255, 214, 150, 0.16) 0%,
+    rgba(255, 214, 150, 0.05) 26%,
+    transparent 46%,
+    rgba(12, 10, 8, 0.22) 100%
+  );
+}
+.card-glint {
+  position: absolute;
+  inset: -50%;
+  pointer-events: none;
+  background:
+    linear-gradient(118deg, transparent 31%, rgba(255, 240, 215, 0.086) 38%, rgba(255, 240, 215, 0.024) 44%, transparent 49%),
+    radial-gradient(30% 26% at 30% 27.5%, rgba(255, 236, 205, 0.3), rgba(255, 214, 150, 0.09) 55%, transparent);
+}
+.card-rim {
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 2rem;
+  pointer-events: none;
+  transform: translateZ(1px);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 222, 170, 0.6) 0%,
+    rgba(255, 214, 150, 0.16) 24%,
+    transparent 50%,
+    rgba(241, 236, 228, 0.06) 100%
+  );
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+}
+
+/* ─── Project placeholder cover ──────────────────────────────── */
+.cover-placeholder {
+  background:
+    radial-gradient(60% 80% at 80% 20%, rgba(255, 202, 43, 0.14), transparent 70%),
+    repeating-linear-gradient(0deg, rgba(241, 236, 228, 0.035) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, rgba(241, 236, 228, 0.035) 0 1px, transparent 1px 32px),
+    var(--surface-2);
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-marquee {
+    animation: none !important;
+  }
+  .hero-rise,
+  .hero-mask {
+    animation-duration: 1ms !important;
+    animation-delay: 0s !important;
+  }
+}
