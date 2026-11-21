@@ -1,19 +1,82 @@
 ---
-import type { GetStaticPaths } from 'astro';
-import CaseStudy from '../../components/CaseStudy.astro';
-import { caseStudies, type CaseStudyProject } from '../../content/portfolio';
+import { Image } from 'astro:assets';
+import { projects, type VariantProject } from '../../content/variant';
+import VariantLayout from '../../layouts/VariantLayout.astro';
 
-export const getStaticPaths = (() => caseStudies.map((project, index) => ({
-  params: { slug: project.id },
-  props: { project, next: caseStudies[index + 1] },
-}))) satisfies GetStaticPaths;
+export function getStaticPaths() {
+  return projects.map((project, index) => ({
+    params: { slug: project.slug },
+    props: { project, next: projects[(index + 1) % projects.length] },
+  }));
+}
 
 interface Props {
-  project: CaseStudyProject;
-  next?: CaseStudyProject;
+  project: VariantProject;
+  next: VariantProject;
 }
 
 const { project, next } = Astro.props;
+const lastBlock = project.blocks.at(-1);
 ---
 
-<CaseStudy {project} {next} />
+<VariantLayout title={project.title} label={project.title} active="work" navTone="dark" footer="case" nextCase={next}
+  roundedColor={lastBlock?.background ?? '#ffffff'} description={project.summary}>
+  <header class="page-header case-header container-medium">
+    <h1 class="page-heading"><span class="line-mask"><span>{project.title}</span></span></h1>
+  </header>
+
+  <main>
+    <section class="case-intro container-medium" data-reveal>
+      <div>
+        <p class="eyebrow">Role / Services</p>
+        <span class="stripe"></span>
+        <p>{project.services}</p>
+      </div>
+      <div>
+        <p class="eyebrow">Credits</p>
+        <span class="stripe"></span>
+        {project.credits.map((line) => <p>{line}</p>)}
+      </div>
+      <div>
+        <p class="eyebrow">Location & year</p>
+        <span class="stripe"></span>
+        <p>{project.location} ©</p>
+        <p>{project.year}</p>
+      </div>
+    </section>
+
+    {project.summary && <p class="case-summary container-medium" data-reveal>{project.summary}</p>}
+
+    <section class="case-intro-image container">
+      {project.link && (
+        <div class="case-link" data-parallax-button>
+          <a class="round-button round-button-blue magnetic" href={project.link.href} target="_blank" rel="noreferrer" data-magnetic>
+            <span class="btn-fill"></span>
+            <span class="magnetic-inner">{project.link.label} ↗</span>
+          </a>
+        </div>
+      )}
+      <div class="case-cover" style={`background-color: ${project.color}`} data-parallax-image>
+        {project.image
+          ? <Image src={project.image} alt={project.alt ?? project.title} widths={[800, 1280]} sizes="84vw" format="webp" loading="eager" />
+          : <span class="placeholder-title">{project.title}</span>}
+      </div>
+    </section>
+
+    {project.blocks.map((block) => (
+      <section class="case-block" style={`background-color: ${block.background}`}>
+        <div class="container">
+          <div class={`device device-${block.device}`} data-reveal>
+            {block.device === 'browser' && <div class="device-bar" aria-hidden="true"><span></span><span></span><span></span></div>}
+            <div class="device-screen">
+              {block.image
+                ? <Image src={block.image} alt={block.alt} widths={[800, 1280]} sizes="70vw" format="webp" />
+                : <div class="device-placeholder"><span>{block.alt}</span></div>}
+            </div>
+            {block.device === 'laptop' && <div class="device-base" aria-hidden="true"></div>}
+          </div>
+        </div>
+      </section>
+    ))}
+  </main>
+</VariantLayout>

@@ -1,0 +1,91 @@
+---
+import Footer from '../components/variant/Footer.astro';
+import Nav from '../components/variant/Nav.astro';
+import SideMenu from '../components/variant/SideMenu.astro';
+import { fullName, home, routeLabels, site, type NavKey, type VariantProject } from '../content/variant';
+import '../styles/variant.css';
+
+interface Props {
+  title: string;
+  /** Word on the loading curtain for this page. */
+  label: string;
+  active: NavKey;
+  /** Text color of the top navigation. */
+  navTone: 'light' | 'dark';
+  /** Page background. */
+  theme?: 'light' | 'dark';
+  footer: 'full' | 'case' | 'minimal';
+  nextCase?: VariantProject;
+  roundedColor?: string;
+  /** Show the multilingual greeting on the first visit of the session. */
+  greet?: boolean;
+  description?: string;
+}
+
+const { title, label, active, navTone, theme = 'light', footer, nextCase, roundedColor, greet = false, description = site.description } = Astro.props;
+const pageTitle = active === 'home' ? title : `${title} • ${fullName}`;
+const canonical = Astro.site && new URL(Astro.url.pathname, Astro.site).href;
+const socialImage = Astro.site && new URL('/social-card.jpg', Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en" data-theme={theme}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#1C1D20" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    {socialImage && <meta property="og:image" content={socialImage} />}
+    <script is:inline define:vars={{ greet }}>
+      const root = document.documentElement;
+      root.classList.add('js');
+      let mode = 'label';
+      try {
+        if (greet && !sessionStorage.getItem('variant-greeted')) mode = 'greet';
+        sessionStorage.setItem('variant-greeted', '1');
+        if (sessionStorage.getItem('variant-transition')) {
+          mode = 'label';
+          root.classList.add('from-transition');
+          sessionStorage.removeItem('variant-transition');
+        }
+      } catch {
+        // Without storage every load shows the page label.
+      }
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) mode = 'none';
+      root.dataset.loaderMode = mode;
+    </script>
+  </head>
+  <body>
+    <div class="loader" aria-hidden="true" data-loader>
+      <p class="loader-word"><span class="loader-dot"></span><span data-loader-word>{label}</span></p>
+      <svg class="loader-curve" viewBox="0 0 1000 100" preserveAspectRatio="none"><path data-loader-curve d="M0 0 L1000 0 Q500 200 0 0 Z" /></svg>
+    </div>
+    <script is:inline define:vars={{ first: home.greetings[0] }}>
+      if (document.documentElement.dataset.loaderMode === 'greet') document.querySelector('[data-loader-word]').textContent = first;
+    </script>
+    <script type="application/json" data-greetings set:html={JSON.stringify(home.greetings)} />
+    <script type="application/json" data-route-labels set:html={JSON.stringify(routeLabels)} />
+
+    <div class="cover" aria-hidden="true" data-cover>
+      <svg class="cover-curve" viewBox="0 0 1000 100" preserveAspectRatio="none"><path data-cover-curve d="M0 100 L1000 100 Q500 -100 0 100 Z" /></svg>
+      <p class="loader-word"><span class="loader-dot"></span><span data-cover-word></span></p>
+    </div>
+
+    <SideMenu active={active} />
+
+    <div class="page" id="top">
+      <Nav tone={navTone} active={active} />
+      <slot />
+      <Footer kind={footer} next={nextCase} roundedColor={roundedColor} />
+    </div>
+
+    <script>
+      import '../scripts/variant';
+    </script>
+  </body>
+</html>

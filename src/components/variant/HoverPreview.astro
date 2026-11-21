@@ -1,0 +1,27 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  /** One slide per hover row, in row order. Leave empty to show only the cursor circle. */
+  items?: { title: string; color: string; image?: ImageMetadata }[];
+}
+
+const { items = [] } = Astro.props;
+---
+
+{items.length > 0 && (
+  <div class="hover-modal" aria-hidden="true" data-hover-modal>
+    <div class="hover-modal-slider" data-hover-slider>
+      {items.map((item) => (
+        <div class="hover-modal-slide" style={`background-color: ${item.color}`}>
+          {item.image
+            ? <Image src={item.image} alt="" widths={[400, 800]} sizes="400px" format="webp" />
+            : <span class="placeholder-title">{item.title}</span>}
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+<div class="hover-cursor" aria-hidden="true" data-hover-cursor></div>
+<div class="hover-cursor-label" aria-hidden="true" data-hover-label>View</div>

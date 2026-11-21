@@ -1,0 +1,61 @@
+---
+import { Image } from 'astro:assets';
+import { contactPage, site } from '../content/variant';
+import VariantLayout from '../layouts/VariantLayout.astro';
+---
+
+<VariantLayout title="Contact" label="Contact" active="contact" navTone="light" theme="dark" footer="minimal">
+  <header class="page-header contact-header container-medium">
+    <h1 class="page-heading">
+      <span class="line-mask"><span><span class="contact-avatar contact-avatar-inline"><Image src={site.portrait} alt="" widths={[160]} sizes="80px" format="webp" /></span>{contactPage.heading[0]}</span></span>
+      <span class="line-mask"><span>{contactPage.heading[1]}</span></span>
+    </h1>
+    <div class="contact-header-side">
+      <span class="contact-avatar"><Image src={site.portrait} alt="" widths={[200]} sizes="110px" format="webp" /></span>
+      <svg class="contact-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M6 6l12 12M18 8v10H8" /></svg>
+    </div>
+  </header>
+
+  <main class="contact-main container-medium">
+    <form class="contact-form" data-contact-form data-email={site.email ?? ''} novalidate>
+      {contactPage.fields.map((field, index) => (
+        <div class="form-col">
+          <p class="eyebrow">{String(index + 1).padStart(2, '0')}</p>
+          <label for={`field-${field.name}`}>{field.label}</label>
+          {field.type === 'textarea'
+            ? <textarea id={`field-${field.name}`} name={field.name} placeholder={field.placeholder} required={field.required} rows="4"></textarea>
+            : <input id={`field-${field.name}`} name={field.name} type={field.type} placeholder={field.placeholder} required={field.required} />}
+        </div>
+      ))}
+      <div class="line-with-button">
+        <span class="stripe"></span>
+        <div class="line-button">
+          <button class="round-button round-button-blue magnetic" type="submit" data-magnetic>
+            <span class="btn-fill"></span>
+            <span class="magnetic-inner">{contactPage.submit}</span>
+          </button>
+        </div>
+      </div>
+      <p class="form-status" role="status" data-form-status></p>
+    </form>
+
+    <aside class="contact-details">
+      <p class="eyebrow">Contact details</p>
+      <ul>
+        {site.contactLinks.map((link) => (
+          <li><a class="underline-link" href={link.href} target="_blank" rel="noreferrer">{link.label}</a></li>
+        ))}
+      </ul>
+      <p class="eyebrow">Details</p>
+      <ul>
+        {contactPage.details.map((line) => <li><p>{line}</p></li>)}
+      </ul>
+      <p class="eyebrow">Socials</p>
+      <ul>
+        {site.socials.map((social) => (
+          <li><a class="underline-link" href={social.href} target="_blank" rel="noreferrer">{social.label}</a></li>
+        ))}
+      </ul>
+    </aside>
+  </main>
+</VariantLayout>

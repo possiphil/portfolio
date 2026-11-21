@@ -1,0 +1,94 @@
+---
+import { Image } from 'astro:assets';
+import { footer, projects, site, type VariantProject } from '../../content/variant';
+
+interface Props {
+  /** "full": Let's work together. "case": next case teaser. "minimal": bottom bar only. */
+  kind: 'full' | 'case' | 'minimal';
+  next?: VariantProject;
+  /** Color of the curved edge that hangs into the footer (the section above). */
+  roundedColor?: string;
+}
+
+const { kind, next, roundedColor = '#ffffff' } = Astro.props;
+---
+
+{kind !== 'minimal' && (
+  <div class="rounded-wrap" aria-hidden="true" data-rounded><div class="rounded" style={`background: ${roundedColor}`}></div></div>
+)}
+
+<footer class={`footer footer-${kind}`} id="contact-footer" data-footer>
+  <div class="footer-inner" data-footer-inner={kind === 'minimal' ? undefined : ''}>
+    {kind === 'full' && (
+      <div class="container-medium footer-top">
+        <h2>
+          <span class="footer-avatar">
+            <Image src={site.portrait} alt="" widths={[160]} sizes="80px" format="webp" />
+          </span>
+          <span>{footer.heading[0]}</span>
+          <span>{footer.heading[1]}</span>
+        </h2>
+        <svg class="footer-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M18 6L6 18M6 8v10h10" /></svg>
+        <div class="line-with-button">
+          <span class="stripe"></span>
+          <div class="line-button" data-footer-button>
+            <a class="round-button round-button-blue magnetic" href="/contact" data-magnetic>
+              <span class="btn-fill"></span>
+              <span class="magnetic-inner">{footer.button}</span>
+            </a>
+          </div>
+        </div>
+        <div class="footer-pills">
+          {site.contactLinks.map((link) => (
+            <a class="pill-button pill-button-dark magnetic" href={link.href} data-magnetic target="_blank" rel="noreferrer">
+              <span class="btn-fill"></span>
+              <span class="magnetic-inner">{link.label}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {kind === 'case' && next && (
+      <div class="container-medium footer-top footer-case">
+        <a class="next-case" href={`/work/${next.slug}`} data-next-case>
+          <p>Next case</p>
+          <h2>{next.title}</h2>
+          <div class="next-case-tile" style={`background-color: ${next.color}`} aria-hidden="true">
+            {next.image
+              ? <Image src={next.image} alt="" widths={[400, 720]} sizes="360px" format="webp" />
+              : <span class="placeholder-title">{next.title}</span>}
+          </div>
+        </a>
+        <span class="stripe"></span>
+        <div class="footer-center">
+          <a class="pill-button pill-button-dark magnetic" href="/work" data-magnetic>
+            <span class="btn-fill"></span>
+            <span class="magnetic-inner">All work<sup>{projects.length}</sup></span>
+          </a>
+        </div>
+      </div>
+    )}
+
+    <div class="footer-bottom">
+      <div class="footer-meta">
+        <div>
+          <p class="eyebrow">Version</p>
+          <p>{site.version}</p>
+        </div>
+        <div>
+          <p class="eyebrow">Local time</p>
+          <p data-clock data-time-zone={site.timeZone}>&nbsp;</p>
+        </div>
+      </div>
+      <div class="footer-socials">
+        <p class="eyebrow">Socials</p>
+        <ul>
+          {site.socials.map((social) => (
+            <li><a class="underline-link" href={social.href} target="_blank" rel="noreferrer">{social.label}</a></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>

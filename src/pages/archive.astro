@@ -1,0 +1,39 @@
+---
+import HoverPreview from '../components/variant/HoverPreview.astro';
+import { archive, work } from '../content/variant';
+import VariantLayout from '../layouts/VariantLayout.astro';
+---
+
+<VariantLayout title="Archive" label="Archive" active="none" navTone="dark" footer="full">
+  <header class="page-header container-medium">
+    <h1 class="page-heading"><span class="line-mask"><span>{archive.heading}<sup>({archive.items.length})</sup></span></span></h1>
+  </header>
+
+  <main>
+    <section class="work-overview archive-list" data-view="rows" data-hover-scope>
+      <div class="work-rows container-medium">
+        <div class="list-head">
+          {work.columns.map((column) => <p class="eyebrow">{column}</p>)}
+        </div>
+        <ul class="project-list">
+          {archive.items.map((item, index) => {
+            const Tag = item.href ? 'a' : 'div';
+            return (
+              <li class="project-row hover-row" data-hover-row={index} data-label={item.href ? item.label ?? 'Website' : 'Soon'}>
+                <span class="stripe" data-reveal></span>
+                <Tag href={item.href} target={item.href ? '_blank' : undefined} rel={item.href ? 'noreferrer' : undefined}>
+                  <h4>{item.title}</h4>
+                  <p>{item.location}</p>
+                  <p>{item.services}</p>
+                  <p>{item.year}</p>
+                </Tag>
+              </li>
+            );
+          })}
+          <li class="project-row-end"><span class="stripe" data-reveal></span></li>
+        </ul>
+      </div>
+      <HoverPreview />
+    </section>
+  </main>
+</VariantLayout>

@@ -1,13 +1,21 @@
 ---
-import Icon from '../components/Icon.astro';
-import { fullName } from '../content/portfolio';
-import BaseLayout from '../layouts/BaseLayout.astro';
+import VariantLayout from '../layouts/VariantLayout.astro';
 ---
 
-<BaseLayout title={`Page not found | ${fullName}`} description="This page could not be found." page="missing">
-  <main class="shell missing-page" id="main" tabindex="-1">
+<VariantLayout title="Page not found" label="404" active="none" navTone="dark" footer="full" description="This page could not be found.">
+  <header class="page-header container-medium">
     <p class="eyebrow">404</p>
-    <h1 class="display-heading">Page not found</h1>
-    <a class="editorial-link" href="/" data-home><Icon name="arrow-left" /> Return to portfolio</a>
+    <h1 class="page-heading">
+      <span class="line-mask"><span>This page took a</span></span>
+      <span class="line-mask"><span>wrong turn</span></span>
+    </h1>
+  </header>
+  <main>
+    <div class="center-button container not-found-button">
+      <a class="pill-button pill-button-solid magnetic" href="/" data-magnetic>
+        <span class="btn-fill"></span>
+        <span class="magnetic-inner">Back to home</span>
+      </a>
+    </div>
   </main>
-</BaseLayout>
+</VariantLayout>

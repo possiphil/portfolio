@@ -1,270 +1,105 @@
 ---
 import { Image } from 'astro:assets';
-import { portfolio } from '../content/portfolio';
-import { variant, variantName } from '../content/variant';
-import '../styles/variant.css';
+import HoverPreview from '../components/variant/HoverPreview.astro';
+import { fullName, home, projects, site } from '../content/variant';
+import VariantLayout from '../layouts/VariantLayout.astro';
 
-const title = `${variantName} • ${variant.role.join(' ')}`;
-const canonical = Astro.site && new URL('/', Astro.site).href;
-const socialImage = Astro.site && new URL('/social-card.jpg', Astro.site).href;
-const words = variant.intro.phrase.split(' ');
-const projectCount = variant.projects.length;
+const words = home.intro.phrase.split(' ');
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>{title}</title>
-    <meta name="description" content={portfolio.description} />
-    <meta name="theme-color" content="#1C1D20" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    {canonical && <link rel="canonical" href={canonical} />}
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={portfolio.description} />
-    {socialImage && <meta property="og:image" content={socialImage} />}
-    <script is:inline>
-      document.documentElement.classList.add('js');
-      try {
-        if (sessionStorage.getItem('variant-loaded')) document.documentElement.classList.add('is-returning');
-        sessionStorage.setItem('variant-loaded', '1');
-      } catch {}
-    </script>
-  </head>
-  <body>
-    <!-- Preloader -->
-    <div class="loader" aria-hidden="true" data-loader>
-      <p class="loader-word"><span class="loader-dot"></span><span data-loader-word>{variant.greetings[0]}</span></p>
-      <svg class="loader-curve" viewBox="0 0 1000 100" preserveAspectRatio="none"><path data-loader-curve d="M0 0 L1000 0 L1000 0 Q500 100 0 0 Z" /></svg>
-      <script is:inline type="application/json" data-loader-words set:html={JSON.stringify(variant.greetings)} />
+<VariantLayout title={`${fullName} • ${home.role.join(' ')}`} label="Home" active="home" navTone="light" footer="full" greet>
+  <header class="hero" style={`--hero-color: ${home.heroColor}`} data-hero>
+    <div class="hero-photo" data-hero-photo>
+      <Image src={site.portrait} alt={site.portraitAlt} widths={[600, 900, 1000]} sizes="(max-width: 800px) 140vw, 70vw"
+        format="webp" quality={86} loading="eager" fetchpriority="high" />
     </div>
 
-    <!-- Fixed menu button + side menu -->
-    <div class="menu-button-wrap" data-menu-button-wrap>
-      <button class="menu-button magnetic" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="side-menu" data-menu-button data-magnetic>
-        <span class="btn-fill"></span>
-        <span class="menu-lines magnetic-inner"><span></span><span></span></span>
-      </button>
-    </div>
-    <div class="menu-overlay" data-menu-close></div>
-    <aside class="side-menu" id="side-menu" aria-label="Menu" data-side-menu>
-      <svg class="side-menu-curve" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true"><path data-menu-curve d="M100 0 L100 1000 Q-100 500 100 0" /></svg>
-      <div class="side-menu-inner">
-        <div class="side-menu-block">
-          <p class="eyebrow">Navigation</p>
-          <span class="stripe"></span>
-          <ul class="side-menu-links">
-            {variant.nav.map((item) => (
-              <li><a href={item.href} data-menu-link><span class="side-dot"></span>{item.label}</a></li>
-            ))}
-          </ul>
-        </div>
-        <div class="side-menu-block">
-          <p class="eyebrow">Socials</p>
-          <ul class="side-menu-socials">
-            {variant.footer.socials.map((social) => (
-              <li><a class="underline-link" href={social.href} target="_blank" rel="noreferrer">{social.label}</a></li>
-            ))}
-          </ul>
-        </div>
+    <div class="hanger">
+      <p>{home.location.map((line) => <span>{line}</span>)}</p>
+      <div class="hanger-globe" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2">
+          <circle cx="16" cy="16" r="12" />
+          <g class="globe-meridians">
+            <ellipse cx="16" cy="16" rx="5.5" ry="12" />
+            <path d="M16 4v24" />
+          </g>
+          <path d="M4.6 12h22.8M4.6 20h22.8" />
+        </svg>
       </div>
-    </aside>
+    </div>
 
-    <div class="page" id="top">
-      <!-- Hero -->
-      <header class="hero" style={`--hero-color: ${variant.heroColor}`} data-hero>
-        <div class="hero-photo">
-          <Image src={variant.portrait} alt={variant.portraitAlt} widths={[600, 900, 1000]} sizes="(max-width: 800px) 140vw, 70vw"
-            format="webp" quality={86} loading="eager" fetchpriority="high" />
-        </div>
+    <div class="hero-role" data-hero-parallax>
+      <svg class="hero-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M6 6l12 12M18 8v10H8" /></svg>
+      <h2>{home.role.map((line) => <span>{line}</span>)}</h2>
+    </div>
 
-        <nav class="top-nav" aria-label="Primary">
-          <a class="brand" href="#top" aria-label={`${variantName}, back to top`}>
-            <span class="brand-copy">©</span>
-            <span class="brand-roll">
-              <span class="brand-roll-a">Code by</span>
-              <span class="brand-roll-b">{variant.firstName}</span>
-              <span class="brand-roll-c">{variant.lastName}</span>
-            </span>
-          </a>
-          <ul class="top-links">
-            {variant.nav.slice(1).map((item) => (
-              <li><a class="magnetic" href={item.href} data-magnetic data-magnetic-strength="0.6"><span class="magnetic-inner">{item.label}</span><span class="nav-dot"></span></a></li>
-            ))}
-          </ul>
-        </nav>
+    <div class="hero-name-wrap" aria-hidden="true">
+      <div class="hero-name-track" data-marquee>
+        <span>{fullName}<i>—</i></span>
+        <span>{fullName}<i>—</i></span>
+      </div>
+    </div>
+    <h1 class="visually-hidden">{fullName}</h1>
+  </header>
 
-        <div class="hanger">
-          <p>{variant.location.map((line) => <span>{line}</span>)}</p>
-          <div class="hanger-globe" aria-hidden="true">
-            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2">
-              <circle cx="16" cy="16" r="12" />
-              <g class="globe-meridians">
-                <ellipse cx="16" cy="16" rx="5.5" ry="12" />
-                <path d="M16 4v24" />
-              </g>
-              <path d="M4.6 12h22.8M4.6 20h22.8" />
-            </svg>
-          </div>
-        </div>
-
-        <div class="hero-role" data-hero-parallax>
-          <svg class="hero-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M6 6l12 12M18 8v10H8" /></svg>
-          <h2>{variant.role.map((line) => <span>{line}</span>)}</h2>
-        </div>
-
-        <div class="hero-name-wrap" aria-hidden="true">
-          <div class="hero-name-track" data-marquee>
-            <span>{variantName}<i>—</i></span>
-            <span>{variantName}<i>—</i></span>
-          </div>
-        </div>
-        <h1 class="visually-hidden">{variantName}</h1>
-      </header>
-
-      <main>
-        <!-- Intro -->
-        <section class="intro container" id="about">
-          <div class="intro-grid">
-            <h3 class="intro-phrase" data-reveal-words aria-label={variant.intro.phrase}>
-              {words.map((word, index) => (
-                <span class="word-mask" aria-hidden="true"><span style={`--i: ${index}`}>{word}</span></span>
-              ))}
-            </h3>
-            <div class="intro-side">
-              <p data-fade>{variant.intro.paragraph}</p>
-              <div class="intro-button" data-intro-button>
-                <a class="round-button magnetic" href={variant.intro.button.href} data-magnetic target="_blank" rel="noreferrer">
-                  <span class="btn-fill"></span>
-                  <span class="magnetic-inner">{variant.intro.button.label}</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Work list -->
-        <section class="work container" id="work" data-work>
-          <p class="eyebrow">Recent work</p>
-          <ul class="work-list">
-            {variant.projects.map((project, index) => {
-              const Tag = project.href ? 'a' : 'div';
-              return (
-                <li class="work-row" data-work-row={index} data-label={project.href ? 'View' : 'Soon'}>
-                  <Tag class="work-row-link" href={project.href}>
-                    <h4>{project.title}</h4>
-                    <p>{project.category}</p>
-                  </Tag>
-                </li>
-              );
-            })}
-          </ul>
-
-          <!-- Mobile tiles replace the hover list on touch devices -->
-          <ul class="work-tiles">
-            {variant.projects.map((project) => {
-              const Tag = project.href ? 'a' : 'div';
-              return (
-                <li>
-                  <Tag class="work-tile" href={project.href}>
-                    <div class="work-tile-media" style={`background-color: ${project.color}`}>
-                      {project.image
-                        ? <Image src={project.image} alt={project.alt ?? project.title} widths={[480, 800]} sizes="90vw" format="webp" />
-                        : <span class="placeholder-title">{project.title}</span>}
-                    </div>
-                    <h4>{project.title}</h4>
-                    <span class="stripe"></span>
-                    <p>{project.category}</p>
-                  </Tag>
-                </li>
-              );
-            })}
-          </ul>
-
-          <div class="more-work">
-            <a class="pill-button magnetic" href={variant.moreWork.href} target="_blank" rel="noreferrer" data-magnetic>
+  <main>
+    <section class="intro container-medium">
+      <div class="intro-grid">
+        <h3 class="intro-phrase" data-reveal-words aria-label={home.intro.phrase}>
+          {words.map((word, index) => (
+            <span class="word-mask" aria-hidden="true"><span style={`--i: ${index}`}>{word}</span></span>
+          ))}
+        </h3>
+        <div class="intro-side">
+          <p data-fade>{home.intro.paragraph}</p>
+          <div class="intro-button" data-parallax-button>
+            <a class="round-button magnetic" href="/about" data-magnetic>
               <span class="btn-fill"></span>
-              <span class="magnetic-inner">{variant.moreWork.label}<sup>{projectCount}</sup></span>
+              <span class="magnetic-inner">{home.intro.button}</span>
             </a>
           </div>
-
-          <!-- Floating preview that follows the cursor -->
-          <div class="work-modal" aria-hidden="true" data-work-modal>
-            <div class="work-modal-slider" data-work-slider>
-              {variant.projects.map((project) => (
-                <div class="work-modal-slide" style={`background-color: ${project.color}`}>
-                  {project.image
-                    ? <Image src={project.image} alt="" widths={[400, 800]} sizes="400px" format="webp" />
-                    : <span class="placeholder-title">{project.title}</span>}
-                </div>
-              ))}
-            </div>
-          </div>
-          <div class="work-cursor" aria-hidden="true" data-work-cursor></div>
-          <div class="work-cursor-label" aria-hidden="true" data-work-label>View</div>
-        </section>
-
-        <div class="rounded-wrap" aria-hidden="true" data-rounded><div class="rounded"></div></div>
-      </main>
-
-      <!-- Footer -->
-      <footer class="footer" id="contact" data-footer>
-        <div class="footer-inner" data-footer-inner>
-          <div class="container footer-top">
-            <h2>
-              <span class="footer-avatar">
-                <Image src={variant.portrait} alt="" widths={[160]} sizes="80px" format="webp" />
-              </span>
-              <span>{variant.footer.heading[0]}</span>
-              <span>{variant.footer.heading[1]}</span>
-            </h2>
-            <svg class="footer-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M18 6L6 18M6 8v10h10" /></svg>
-            <div class="footer-line">
-              <span class="stripe"></span>
-              <div class="footer-button" data-footer-button>
-                <a class="round-button round-button-blue magnetic" href={variant.footer.button.href} data-magnetic target="_blank" rel="noreferrer">
-                  <span class="btn-fill"></span>
-                  <span class="magnetic-inner">{variant.footer.button.label}</span>
-                </a>
-              </div>
-            </div>
-            <div class="footer-pills">
-              {variant.footer.pills.map((pill) => (
-                <a class="pill-button pill-button-dark magnetic" href={pill.href} data-magnetic target="_blank" rel="noreferrer">
-                  <span class="btn-fill"></span>
-                  <span class="magnetic-inner">{pill.label}</span>
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div class="footer-bottom">
-            <div class="footer-meta">
-              <div>
-                <p class="eyebrow">Version</p>
-                <p>{variant.footer.version}</p>
-              </div>
-              <div>
-                <p class="eyebrow">Local time</p>
-                <p data-clock data-time-zone={variant.footer.timeZone}>&nbsp;</p>
-              </div>
-            </div>
-            <div class="footer-socials">
-              <p class="eyebrow">Socials</p>
-              <ul>
-                {variant.footer.socials.map((social) => (
-                  <li><a class="underline-link" href={social.href} target="_blank" rel="noreferrer">{social.label}</a></li>
-                ))}
-              </ul>
-            </div>
-          </div>
         </div>
-      </footer>
-    </div>
+      </div>
+    </section>
 
-    <script>
-      import '../scripts/variant';
-    </script>
-  </body>
-</html>
+    <section class="home-work container-medium" data-hover-scope>
+      <p class="eyebrow">Recent work</p>
+      <ul class="home-work-list">
+        {projects.map((project, index) => (
+          <li class="home-work-row hover-row" data-hover-row={index} data-label="View">
+            <a href={`/work/${project.slug}`}>
+              <h4>{project.title}</h4>
+              <p>{project.services}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <ul class="work-tiles home-work-tiles">
+        {projects.map((project) => (
+          <li>
+            <a class="work-tile" href={`/work/${project.slug}`}>
+              <div class="work-tile-media" style={`background-color: ${project.color}`}>
+                {project.image
+                  ? <Image src={project.image} alt={project.alt ?? project.title} widths={[480, 800]} sizes="90vw" format="webp" />
+                  : <span class="placeholder-title">{project.title}</span>}
+              </div>
+              <h4>{project.title}</h4>
+              <span class="stripe"></span>
+              <div class="work-tile-meta"><p>{project.services}</p><p>{project.year}</p></div>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div class="center-button">
+        <a class="pill-button magnetic" href="/work" data-magnetic>
+          <span class="btn-fill"></span>
+          <span class="magnetic-inner">{home.moreWork}<sup>{projects.length}</sup></span>
+        </a>
+      </div>
+
+      <HoverPreview items={projects} />
+    </section>
+  </main>
+</VariantLayout>

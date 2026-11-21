@@ -1,0 +1,43 @@
+---
+import { nav, site, type NavKey } from '../../content/variant';
+
+interface Props {
+  active: NavKey;
+}
+
+const { active } = Astro.props;
+---
+
+<div class="menu-button-wrap" data-menu-button-wrap>
+  <button class="menu-button magnetic" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="side-menu" data-menu-button data-magnetic>
+    <span class="btn-fill"></span>
+    <span class="menu-lines magnetic-inner"><span></span><span></span></span>
+  </button>
+</div>
+<div class="menu-overlay" data-menu-close></div>
+<aside class="side-menu" id="side-menu" aria-label="Menu" data-side-menu>
+  <svg class="side-menu-curve" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true"><path data-menu-curve d="M100 0 L100 1000 Q-100 500 100 0" /></svg>
+  <div class="side-menu-inner">
+    <div class="side-menu-block">
+      <p class="eyebrow">Navigation</p>
+      <span class="stripe"></span>
+      <ul class="side-menu-links">
+        {nav.map((item) => (
+          <li class:list={{ 'is-active': active === item.key }}>
+            <a class="magnetic" href={item.href} data-menu-link data-magnetic data-magnetic-strength="0.25">
+              <span class="magnetic-inner"><span class="side-dot"></span>{item.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="side-menu-block">
+      <p class="eyebrow">Socials</p>
+      <ul class="side-menu-socials">
+        {site.socials.map((social) => (
+          <li><a class="underline-link" href={social.href} target="_blank" rel="noreferrer">{social.label}</a></li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</aside>

@@ -1,0 +1,36 @@
+---
+import { nav, site, type NavKey } from '../../content/variant';
+
+interface Props {
+  /** "light" draws white text (dark or photo backgrounds), "dark" draws dark text. */
+  tone: 'light' | 'dark';
+  active: NavKey;
+}
+
+const { tone, active } = Astro.props;
+---
+
+<nav class={`top-nav tone-${tone}`} aria-label="Primary">
+  <a class="brand" href="/" aria-label={`${site.firstName} ${site.lastName}, home`}>
+    <span class="brand-copy">©</span>
+    <span class="brand-roll">
+      <span class="brand-roll-a">Code by</span>
+      <span class="brand-roll-b">{site.firstName}</span>
+      <span class="brand-roll-c">{site.lastName}</span>
+    </span>
+  </a>
+  <ul class="top-links">
+    {nav.slice(1).map((item) => (
+      <li class:list={['top-link', { 'is-active': active === item.key }]}>
+        <a class="magnetic" href={item.href} data-magnetic data-magnetic-strength="0.6" aria-current={active === item.key ? 'page' : undefined}>
+          <span class="magnetic-inner">{item.label}</span><span class="nav-dot"></span>
+        </a>
+      </li>
+    ))}
+    <li class="top-link top-link-menu">
+      <button class="magnetic" type="button" data-menu-open data-magnetic data-magnetic-strength="0.6">
+        <span class="magnetic-inner">Menu</span><span class="nav-dot"></span>
+      </button>
+    </li>
+  </ul>
+</nav>

@@ -1,0 +1,90 @@
+---
+import { Image } from 'astro:assets';
+import HoverPreview from '../../components/variant/HoverPreview.astro';
+import { archive, projects, work } from '../../content/variant';
+import VariantLayout from '../../layouts/VariantLayout.astro';
+
+const filters = [...new Set(projects.map((project) => project.filter))].map((name) => ({
+  name,
+  count: projects.filter((project) => project.filter === name).length,
+}));
+---
+
+<VariantLayout title="Work" label="Work" active="work" navTone="dark" footer="full">
+  <header class="page-header container-medium">
+    <h1 class="page-heading">{work.heading.map((line) => <span class="line-mask"><span>{line}</span></span>)}</h1>
+  </header>
+
+  <main>
+    <section class="work-filters container-medium" data-reveal>
+      <div class="filter-group" role="group" aria-label="Filter projects">
+        <button class="pill-button magnetic is-active" type="button" data-filter-button="all" aria-pressed="true" data-magnetic>
+          <span class="btn-fill"></span><span class="magnetic-inner">All</span>
+        </button>
+        {filters.map((filter) => (
+          <button class="pill-button magnetic" type="button" data-filter-button={filter.name} aria-pressed="false" data-magnetic>
+            <span class="btn-fill"></span><span class="magnetic-inner">{filter.name}<sup>{filter.count}</sup></span>
+          </button>
+        ))}
+      </div>
+      <div class="view-group" role="group" aria-label="Layout">
+        <button class="icon-button magnetic is-active" type="button" data-view-button="rows" aria-label="Show as list" aria-pressed="true" data-magnetic>
+          <span class="btn-fill"></span>
+          <svg class="magnetic-inner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+        </button>
+        <button class="icon-button magnetic" type="button" data-view-button="columns" aria-label="Show as grid" aria-pressed="false" data-magnetic>
+          <span class="btn-fill"></span>
+          <svg class="magnetic-inner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M5 5h5v5H5zM14 5h5v5h-5zM5 14h5v5H5zM14 14h5v5h-5z" /></svg>
+        </button>
+      </div>
+    </section>
+
+    <section class="work-overview" data-view="rows" data-filter-scope data-hover-scope>
+      <div class="work-rows container-medium">
+        <div class="list-head">
+          {work.columns.map((column) => <p class="eyebrow">{column}</p>)}
+        </div>
+        <ul class="project-list">
+          {projects.map((project, index) => (
+            <li class="project-row hover-row" data-hover-row={index} data-label="View" data-filter-item={project.filter}>
+              <span class="stripe" data-reveal></span>
+              <a href={`/work/${project.slug}`}>
+                <h4>{project.title}</h4>
+                <p>{project.location}</p>
+                <p>{project.services}</p>
+                <p>{project.year}</p>
+              </a>
+            </li>
+          ))}
+          <li class="project-row-end"><span class="stripe" data-reveal></span></li>
+        </ul>
+      </div>
+
+      <ul class="work-tiles work-grid container">
+        {projects.map((project) => (
+          <li data-filter-item={project.filter}>
+            <a class="work-tile" href={`/work/${project.slug}`}>
+              <div class="work-tile-media" style={`background-color: ${project.color}`}>
+                {project.image
+                  ? <Image src={project.image} alt={project.alt ?? project.title} widths={[480, 800]} sizes="(max-width: 800px) 90vw, 42vw" format="webp" />
+                  : <span class="placeholder-title">{project.title}</span>}
+              </div>
+              <h4>{project.title}</h4>
+              <span class="stripe"></span>
+              <div class="work-tile-meta"><p>{project.services}</p><p>{project.year}</p></div>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <HoverPreview items={projects} />
+    </section>
+
+    <div class="center-button container">
+      <a class="pill-button pill-button-solid magnetic" href="/archive" data-magnetic>
+        <span class="btn-fill"></span>
+        <span class="magnetic-inner">{work.archiveLabel}<sup>{archive.items.length}</sup></span>
+      </a>
+    </div>
+  </main>
+</VariantLayout>
