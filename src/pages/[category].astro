@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import BentoCard from '../components/BentoCard.astro';
+import PageHeading from '../components/PageHeading.astro';
+import { categories, type Category } from '../content/site';
+
+export function getStaticPaths() {
+  return categories.map((category) => ({ params: { category: category.slug }, props: { category } }));
+}
+
+const { category } = Astro.props as { category: Category };
+---
+
+<Base title={category.title} description={category.intro}>
+  <div class="category">
+    <PageHeading title={category.title}>
+      <p class="page-intro">{category.intro}</p>
+    </PageHeading>
+
+    <div class="bento-grid">
+      {category.cards.map((card, i) => <BentoCard card={card} index={i} fallback={category.palette} />)}
+    </div>
+  </div>
+</Base>

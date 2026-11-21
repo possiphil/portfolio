@@ -1,0 +1,20 @@
+---
+import { person } from '../content/site';
+
+interface Props {
+  title: string;
+  trail?: { label: string; href: string }[];
+}
+
+const { title, trail = [] } = Astro.props;
+---
+
+<div class="page-heading">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="/">{person.logoName}.{person.logoSuffixes[0]}</a>
+    {trail.map((step) => <><span class="crumb-sep">/</span><a href={step.href}>{step.href.replace(/^\//, '')}</a></>)}
+    <span class="crumb-sep">/</span>
+  </nav>
+  <h1>{title}</h1>
+  <slot />
+</div>

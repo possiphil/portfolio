@@ -1,0 +1,83 @@
+---
+import { Image } from 'astro:assets';
+import Card from './Card.astro';
+import Glyph from './Glyph.astro';
+import WaveArt from './WaveArt.astro';
+import type { CategoryCard, Palette } from '../content/site';
+
+interface Props {
+  card: CategoryCard;
+  index: number;
+  fallback: Palette;
+}
+
+const { card, index, fallback } = Astro.props;
+const listSize = (card.items?.length ?? 0) > 3 ? 'large' : 'wide';
+const size = card.size ?? (card.kind === 'image' ? 'large' : card.kind === 'list' ? listSize : 'small');
+const palette = card.palette ?? fallback;
+// List cards hold their own links, so the card itself must not be one.
+const href = card.kind === 'list' ? undefined : card.href;
+---
+
+<Card href={href} class={`bento bento-${card.kind} size-${size}`} tilt={size === 'large' ? 5 : 9} index={index} label={href ? card.title : undefined} tone={card.kind === 'image' || card.kind === 'text' ? 'dark' : 'light'}>
+  {
+    card.kind === 'image' && card.image && (
+      <>
+        <div class="bento-image" data-parallax="10">
+          <Image src={card.image.image} alt={card.image.alt} widths={[400, 800]} sizes="(min-width: 900px) 360px, 100vw" style={card.image.position ? `object-position:${card.image.position}` : undefined} />
+        </div>
+        <span class="bento-caption">
+          <strong>{card.title}</strong>
+          {card.description && <span>{card.description}</span>}
+        </span>
+      </>
+    )
+  }
+
+  {
+    card.kind === 'icon' && (
+      <div class="bento-icon-body">
+        <span class="bento-squircle" data-parallax="6">
+          <WaveArt palette={palette} variant={index} />
+          <Glyph name={card.glyph} />
+        </span>
+        <strong>{card.title}</strong>
+        {card.description && <span>{card.description}</span>}
+      </div>
+    )
+  }
+
+  {
+    card.kind === 'list' && (
+      <div class="bento-list-body">
+        <ul>
+          {card.items?.map((item) => {
+            const Tag = item.href ? 'a' : 'div';
+            return (
+              <li>
+                <Tag href={item.href} {...(item.href?.startsWith('http') ? { rel: 'noopener', target: '_blank' } : {})}>
+                  <strong>{item.title}</strong>
+                  {item.description && <span>{item.description}</span>}
+                </Tag>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    )
+  }
+
+  {
+    card.kind === 'text' && (
+      <>
+        <div class="tile-art" data-parallax="10">
+          <WaveArt palette={palette} variant={index + 2} />
+        </div>
+        <span class="bento-text-body" style={`color:${palette.ink}`}>
+          <strong>{card.title}</strong>
+          {card.description && <span>{card.description}</span>}
+        </span>
+      </>
+    )
+  }
+</Card>

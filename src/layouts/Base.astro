@@ -1,0 +1,83 @@
+---
+import '@fontsource-variable/outfit';
+import '@fontsource-variable/quicksand';
+import '../styles/base.css';
+import Logo from '../components/Logo.astro';
+import Drawer from '../components/Drawer.astro';
+import Footer from '../components/Footer.astro';
+import { fullName, person } from '../content/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** "fit" keeps the page inside one viewport on desktop (homepage). */
+  frame?: 'fit' | 'flow';
+}
+
+const { title, description = person.description, frame = 'flow' } = Astro.props;
+const pageTitle = title ? `${title} — ${fullName}` : fullName;
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const canonical = Astro.site && new URL(pathname, Astro.site).href;
+const socialImage = Astro.site && new URL('/social-card.jpg', Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en" data-frame={frame}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#eeeeee" />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    {socialImage && <meta property="og:image" content={socialImage} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      // The loading veil plays once per browser session, like a splash screen.
+      try {
+        if (!sessionStorage.getItem('sj-veil') && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+          document.documentElement.dataset.veil = '';
+        }
+        sessionStorage.setItem('sj-veil', '1');
+      } catch {}
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <div class="veil" aria-hidden="true"><span>{person.logoName}.{person.logoSuffixes[0]}</span></div>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <div class="frame">
+      <header class="frame-top">
+        <Logo />
+        <button class="mobile-pill" type="button" data-drawer-open aria-controls="drawer" aria-expanded="false">
+          <span class="pill-line"></span>
+          <span>{fullName.toLowerCase()}</span>
+          <span class="pill-line"></span>
+        </button>
+      </header>
+
+      <main class="frame-center" id="main" tabindex="-1">
+        <slot />
+      </main>
+
+      <Footer />
+    </div>
+
+    <button class="nav-handle" type="button" data-drawer-open aria-controls="drawer" aria-expanded="false">
+      <span class="handle-line"></span>
+      <span class="handle-label">navigation</span>
+      <span class="handle-line"></span>
+    </button>
+
+    <Drawer />
+
+    <script>
+      import '../scripts/motion';
+    </script>
+  </body>
+</html>

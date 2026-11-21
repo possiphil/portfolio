@@ -1,0 +1,38 @@
+---
+/**
+ * The shared tile shell. Everything on the site sits in one of these:
+ * a perspective wrapper that tilts toward the pointer (data-tilt = strength in degrees),
+ * an inner surface with the shadow and radius, and a ripple host for click feedback.
+ * Children marked [data-parallax] drift against the tilt for a depth effect.
+ */
+interface Props {
+  href?: string;
+  class?: string;
+  tilt?: number;
+  index?: number;
+  label?: string;
+  tone?: 'light' | 'dark';
+  style?: string;
+}
+
+const { href, class: className = '', tilt = 8, index = 0, label, tone = 'light', style = '' } = Astro.props;
+const Tag = href ? 'a' : 'div';
+const external = href?.startsWith('http');
+---
+
+<Tag
+  class:list={['card', className]}
+  href={href}
+  data-tilt={tilt}
+  data-tone={tone}
+  aria-label={label}
+  style={`--i:${index};${style}`}
+  {...(external ? { rel: 'noopener', target: '_blank' } : {})}
+>
+  <div class="card-tilt">
+    <div class="card-surface">
+      <slot />
+      <span class="ripple-host" aria-hidden="true"></span>
+    </div>
+  </div>
+</Tag>

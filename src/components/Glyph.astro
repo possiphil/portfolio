@@ -1,0 +1,26 @@
+---
+/** Minimal line icons for icon tiles. Add new ones to the map below. */
+interface Props {
+  name?: string;
+}
+
+const paths: Record<string, string> = {
+  nodes: 'M7 7h4v4H7zM17 5h3v3h-3zM17 16h3v3h-3zM11 9h3l3-2.5M11 10l6 7',
+  spark: 'M12 3v5M12 16v5M3 12h5M16 12h5M6 6l3 3M15 15l3 3M18 6l-3 3M9 15l-3 3',
+  web: 'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',
+  book: 'M4 5c3-1 6-1 8 1v13c-2-2-5-2-8-1zM20 5c-3-1-6-1-8 1v13c2-2 5-2 8-1z',
+  code: 'M8 7l-5 5l5 5M16 7l5 5l-5 5M14 4l-4 16',
+  cap: 'M2 9l10-5l10 5l-10 5zM6 11v5c3 3 9 3 12 0v-5M22 9v6',
+  pad: 'M6 8h12a4 4 0 0 1 4 4v1a3 3 0 0 1-5.5 1.7L15 13H9l-1.5 1.7A3 3 0 0 1 2 13v-1a4 4 0 0 1 4-4zM7 10.5v3M5.5 12h3M16 11h.01M18 13h.01',
+  brackets: 'M8 4H5v16h3M16 4h3v16h-3M10 12h4',
+  db: 'M4 6c0-3 16-3 16 0s-16 3-16 0v12c0 3 16 3 16 0V6M4 12c0 3 16 3 16 0',
+  cube: 'M12 2l9 5v10l-9 5l-9-5V7zM3 7l9 5l9-5M12 12v10',
+  person: 'M12 3a4 4 0 1 0 0 8a4 4 0 1 0 0-8M4 21c1-5 5-7 8-7s7 2 8 7',
+};
+
+const { name = 'spark' } = Astro.props;
+---
+
+<svg class="glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+  <path d={paths[name] ?? paths.spark} fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

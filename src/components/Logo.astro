@@ -1,0 +1,15 @@
+---
+import { person } from '../content/site';
+const [first, ...rest] = person.logoSuffixes;
+// The reel starts and ends on the real domain ending so the resting state reads correctly.
+const reel = [first, ...rest, first];
+---
+
+<a class="logo" href="/" aria-label={`${person.logoName}.${first} — home`} data-logo>
+  <span class="logo-name">{person.logoName}.</span>
+  <span class="logo-window" aria-hidden="true">
+    <span class="logo-reel">
+      {reel.map((suffix) => <span class="logo-suffix">{suffix}</span>)}
+    </span>
+  </span>
+</a>

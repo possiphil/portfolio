@@ -1,0 +1,24 @@
+---
+import Base from '../../layouts/Base.astro';
+import Article from '../../components/Article.astro';
+import { studies, type Study } from '../../content/site';
+
+export function getStaticPaths() {
+  return studies.map((study) => ({ params: { slug: study.slug }, props: { study } }));
+}
+
+const { study } = Astro.props as { study: Study };
+---
+
+<Base title={study.title} description={study.summary}>
+  <Article
+    title={study.title}
+    trail={[{ label: 'projects', href: '/projects' }]}
+    cover={study.cover}
+    intro={study.summary}
+    sections={study.chapters}
+    facts={study.facts}
+    links={study.links}
+    outcomes={study.outcomes}
+  />
+</Base>

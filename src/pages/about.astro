@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import Article from '../components/Article.astro';
+import { media } from '../content/media';
+import { about, person } from '../content/site';
+---
+
+<Base title="About Me" description={about.intro}>
+  <Article
+    title="About Me"
+    cover={media.portrait}
+    intro={about.intro}
+    sections={about.sections}
+    facts={[
+      { label: 'Role', value: person.role },
+      { label: 'Based in', value: 'Munich' },
+    ]}
+    links={[{ label: 'GitHub', href: 'https://github.com/possiphil' }]}
+  />
+</Base>

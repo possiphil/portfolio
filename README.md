@@ -1,17 +1,15 @@
-# sanktjohanser.dev
+# sanktjohanser.dev — tile variant
 
-A static Astro and TypeScript portfolio prototype for Philipp Sanktjohanser. Phase 1 includes the complete homepage and the Genix case study. The approved [design spec](docs/design-spec.md) and [implementation brief](docs/codex-prompt.md) are in `docs/`.
+A static Astro CV site built around a dashboard of tilting tiles: a portrait, gradient-wave category tiles, link cards and a rotating preview, plus bento category pages and long-form article pages.
 
 ## Run locally
 
-Use Node.js 22.23.4 or newer. The repository records the minimum tested version in `.node-version`.
+Use Node.js 22.23.4 or newer.
 
 ```sh
 npm ci
 npm run dev
 ```
-
-Open the Local URL printed by Astro. Use `/` for the homepage and `/work/genix` for the case study, including on a fresh page load.
 
 ```sh
 npm run check
@@ -19,21 +17,23 @@ npm run build
 npm run preview
 ```
 
-`preview` serves the production output in `dist/`. The existing Wrangler configuration serves that same directory as Cloudflare Worker static assets. Set `SITE_URL` at build time if a different origin should appear in canonical and social metadata.
+Pushing a branch to GitHub triggers a Cloudflare Workers Builds preview of that branch.
 
-## Content and assets
+## Personalise
 
-- [Portfolio content](src/content/portfolio.ts) controls the homepage, featured gallery, and case studies. A project with a `study` entry gets a dedicated route. The next-project teaser appears when a subsequent case study exists.
-- [Media manifest](src/content/media.ts) holds the portrait, Genix image/video slots, résumé, and contact endpoints. See the [asset checklist](docs/asset-checklist.md) for missing inputs and where to add them.
-- Instrument Serif and Instrument Sans are self-hosted with OFL licenses in [the font directory](src/assets/fonts).
+Nearly everything lives in [src/content/site.ts](src/content/site.ts):
 
-The homepage curtain is session-scoped. Same-origin cross-document View Transitions supply the gallery image expansion and its reverse where supported. Regular document navigation, native history, and direct case-study URLs remain available independently. Reduced motion skips the animated effects. Without JavaScript, the homepage links, chapter anchors, and links to original images remain usable.
+- `person`: name, the logo suffixes that roll after `sanktjohanser.`, and the letters that appear over the portrait on hover.
+- `categories`: the five wave tiles on the homepage. Each one becomes a page at `/<slug>` with a bento grid of cards. A card is `image`, `icon`, `list` or `text` and can be `small` (1×1), `wide` (2×1) or `large` (2×2).
+- `palettes`: the gradient and wave colours. Wave shapes are in [WaveArt.astro](src/components/WaveArt.astro).
+- `homeLinks`, `reel`: the white link cards and the rotating preview tile.
+- `about`, `studies`: long-form pages (`/about`, `/projects/<slug>`).
+- `navigation`: the side drawer.
 
-## Background atmosphere
+Contact links and images are in [src/content/media.ts](src/content/media.ts). Icon glyphs are in [Glyph.astro](src/components/Glyph.astro).
 
-Tune the glow, grain, and print pattern independently for each theme at the top of [atmosphere.css](src/styles/atmosphere.css). Use `0%` to disable the glow or pattern and `0` to disable the grain. In the browser console, switch the whole treatment off or back on without reloading.
+## Motion
 
-```js
-document.documentElement.dataset.atmosphere = 'off';
-delete document.documentElement.dataset.atmosphere;
-```
+[src/scripts/motion.ts](src/scripts/motion.ts) holds all behaviour: pointer tilt with inner parallax, click ripples, the rolling logo, the preview reel, the drawer, the one-time loading veil and the scale-out page transition. Timings and easing come from `--ease` and `--tilt-ms` in [base.css](src/styles/base.css). Reduced motion turns the effects off; without JavaScript every tile is still a plain link.
+
+Fonts: Outfit and Quicksand (OFL), self-hosted through Fontsource.

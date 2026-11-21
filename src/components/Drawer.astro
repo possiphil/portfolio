@@ -1,0 +1,55 @@
+---
+import { contact } from '../content/media';
+import { fullName, navigation } from '../content/site';
+---
+
+<div class="drawer" id="drawer" data-drawer aria-hidden="true">
+  <div class="drawer-curtain" data-drawer-close></div>
+  <nav class="drawer-panel" aria-label="Site navigation">
+    <div class="drawer-scroll">
+      <a class="drawer-home" href="/"><span class="slash">/</span> {fullName.toLowerCase()}</a>
+
+      {
+        navigation.map((group) => (
+          <section class="drawer-group">
+            <h2>{group.heading}</h2>
+            <ul>
+              {group.links.map((link) => (
+                <li>
+                  <a href={link.href}>
+                    <span class="drawer-title"><span class="slash">/</span> {link.title}</span>
+                    <span class="drawer-desc">{link.description}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+
+      <section class="drawer-group">
+        <h2>Contact &amp; collaboration</h2>
+        <ul>
+          <li>
+            <a href="/contact">
+              <span class="drawer-title"><span class="slash">/</span> contact</span>
+              <span class="drawer-desc">write me.</span>
+            </a>
+          </li>
+          <li class="drawer-connect">
+            <span class="drawer-title"><span class="slash">/</span> let’s connect</span>
+            <span class="drawer-desc">
+              on <a href={contact.github} rel="me">GitHub</a>{contact.linkedin && <>, <a href={contact.linkedin} rel="me">LinkedIn</a></>}.
+            </span>
+          </li>
+        </ul>
+      </section>
+    </div>
+
+    <button class="drawer-close" type="button" data-drawer-close aria-label="Close navigation">
+      <span class="handle-line"></span>
+      <span class="handle-label">close</span>
+      <span class="handle-line"></span>
+    </button>
+  </nav>
+</div>

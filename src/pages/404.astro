@@ -1,13 +1,29 @@
 ---
-import Icon from '../components/Icon.astro';
-import { fullName } from '../content/portfolio';
-import BaseLayout from '../layouts/BaseLayout.astro';
+import Base from '../layouts/Base.astro';
+import Card from '../components/Card.astro';
+import WaveArt from '../components/WaveArt.astro';
+import PageHeading from '../components/PageHeading.astro';
+import { categories } from '../content/site';
 ---
 
-<BaseLayout title={`Page not found | ${fullName}`} description="This page could not be found." page="missing">
-  <main class="shell missing-page" id="main" tabindex="-1">
-    <p class="eyebrow">404</p>
-    <h1 class="display-heading">Page not found</h1>
-    <a class="editorial-link" href="/" data-home><Icon name="arrow-left" /> Return to portfolio</a>
-  </main>
-</BaseLayout>
+<Base title="Not found" description="This page could not be found.">
+  <div class="category">
+    <PageHeading title="Nothing here.">
+      <p class="page-intro">This page does not exist (anymore). Maybe one of these?</p>
+    </PageHeading>
+    <div class="bento-grid">
+      {
+        categories.map((category, i) => (
+          <Card href={`/${category.slug}`} class="bento bento-text size-small" tilt={9} index={i} label={category.title}>
+            <div class="tile-art" data-parallax="10">
+              <WaveArt palette={category.palette} variant={i} />
+            </div>
+            <span class="bento-text-body" style={`color:${category.palette.ink}`}>
+              <strong>{category.label}</strong>
+            </span>
+          </Card>
+        ))
+      }
+    </div>
+  </div>
+</Base>
