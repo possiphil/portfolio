@@ -1,5 +1,13 @@
 # sanktjohanser.dev
 
+> **Branch `feature/vshslv-variant`:** the site on this branch is an experimental variant modelled on the layout and interactions of vshslv.com, rebuilt from scratch (the reference has no public source). It includes a loader line, glass navigation pills with SVG refraction (Chromium), a WebGL portrait with drifting light and smoke, type-on columns, a ticker, a bottom bar with viewport size, OS and clock, a scroll "tunnel" into a draggable work board with a minimap, Portfolio and Profile panels (the profile switches the hero to ASCII), and a ⌘K terminal. `/`, `/portfolio` and `/profile` render the same shell with different panels open.
+>
+> - Content (CV, columns, ticker, taglines, board cards, links): [src/content/cv.ts](src/content/cv.ts)
+> - Markup: [src/components/vs/Shell.astro](src/components/vs/Shell.astro) · styles and tokens: [src/styles/vs.css](src/styles/vs.css)
+> - Behaviour: [src/scripts/vs/](src/scripts/vs/) (`hero-gl.ts` shader and ASCII, `board.ts`, `glass.ts`, `terminal.ts`, `main.ts`)
+>
+> The Genix case study at `/work/genix` is unchanged.
+
 A static Astro and TypeScript portfolio prototype for Philipp Sanktjohanser. Phase 1 includes the complete homepage and the Genix case study. The approved [design spec](docs/design-spec.md) and [implementation brief](docs/codex-prompt.md) are in `docs/`.
 
 ## Run locally

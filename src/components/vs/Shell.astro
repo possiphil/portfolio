@@ -1,0 +1,221 @@
+---
+import { Image, getImage } from 'astro:assets';
+import {
+  boardCards, columns, contactLinks, portfolioEntries, profile, role, site, taglines, ticker,
+} from '../../content/cv';
+
+export type PanelName = 'portfolio' | 'profile';
+
+interface Props {
+  panel?: PanelName;
+}
+
+const { panel } = Astro.props;
+const heroTexture = await getImage({ src: site.portrait.src, width: 1000, format: 'webp', quality: 88 });
+const fullImages = Object.fromEntries(await Promise.all(boardCards
+  .filter((card) => card.image)
+  .map(async (card) => [card.id, (await getImage({ src: card.image!.src, width: 1920, format: 'webp' })).src])));
+const links = contactLinks.filter((link) => link.href);
+const external = (href: string) => /^https?:/.test(href);
+const sections = [
+  { label: 'Experience', entries: profile.experience },
+  { label: 'Education', entries: profile.education },
+].filter((section) => section.entries.length);
+---
+
+<div class="loader" data-loader aria-hidden="true"><span class="loader-line" data-loader-line></span></div>
+<svg class="glass-defs" width="0" height="0" aria-hidden="true" data-glass-defs></svg>
+
+<header class="nav" data-nav>
+  <a class="pill pill--brand" href="/" data-route="home" data-glass>{site.name}</a>
+  <div class="nav-mid">
+    <a class="pill pill--works" href="/portfolio" data-route="portfolio" data-glass aria-current={panel === 'portfolio' ? 'page' : undefined}>Portfolio</a>
+    <div class="pill pill--board" data-board-pill data-glass>
+      <button type="button" class="board-back" data-board-close aria-label="Leave work in progress">←</button>
+      <span>Work in progress</span>
+      <kbd>Esc</kbd>
+    </div>
+  </div>
+  <div class="nav-end">
+    <a class="pill pill--profile" href="/profile" data-route="profile" data-glass aria-current={panel === 'profile' ? 'page' : undefined}>Profile</a>
+    <button type="button" class="pill pill--icon" data-corner data-glass aria-label="Open terminal" title="Terminal (⌘K)">
+      <span class="icon-cmd" aria-hidden="true">⌘</span><span class="icon-close" aria-hidden="true">✕</span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" data-hero aria-labelledby="hero-name">
+    <div class="hero-media" data-hero-media>
+      <img class="hero-fallback" src={heroTexture.src} alt="" width="1000" height="1000" fetchpriority="high" />
+      <canvas class="hero-canvas" data-hero-canvas data-src={heroTexture.src} aria-hidden="true"></canvas>
+      <p class="tunnel-hint" data-tunnel-hint aria-hidden="true">Scroll to work in progress</p>
+    </div>
+
+    <h1 class="sr-only" id="hero-name">{site.name}</h1>
+
+    <div class="info" data-info>
+      <div class="info-col info-role">
+        {role.map((line) => <p data-type>{line}</p>)}
+      </div>
+      {columns.map(({ label, items }) => (
+        <div class="info-col">
+          <p class="info-label" data-type>{label}</p>
+          <ul role="list">{items.map((item) => <li data-type>{item}</li>)}</ul>
+        </div>
+      ))}
+      <div class="info-col info-ticker">
+        <p class="info-label" data-type>{ticker.label}</p>
+        <div class="ticker" data-ticker>
+          <ul role="list" class="ticker-track" data-ticker-track>
+            {ticker.items.map(({ text, href }) => (
+              <li>{href ? <a href={href} target={external(href) ? '_blank' : undefined} rel={external(href) ? 'noreferrer' : undefined}>{text}</a> : <span>{text}</span>}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="scroll-spacer" data-scroll-spacer aria-hidden="true"></div>
+
+  <section class="board" data-board aria-label="Work in progress" tabindex="-1">
+    <div class="board-grid" data-board-grid aria-hidden="true"></div>
+    <div class="board-world" data-board-world>
+      {boardCards.map((card) => (
+        <article class:list={['card', { 'card--text': !card.image }]} data-card style={`--x:${card.x}px;--y:${card.y}px;--w:${card.w}px`}>
+          <header class="card-bar">
+            <span>{card.label}{card.tag && <i>{card.tag}</i>}</span>
+            {card.image && (
+              <button type="button" class="card-expand" data-expand={fullImages[card.id]} data-alt={card.image.alt} aria-label={`Enlarge ${card.label}`}>
+                <svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 4V1h3M6 1h3v3M9 6v3H6M4 9H1V6" /></svg>
+              </button>
+            )}
+          </header>
+          {card.image && (
+            <Image class="card-image" src={card.image.src} alt={card.image.alt} widths={[480, 960, 1440]}
+              sizes={`${card.w}px`} format="webp" draggable="false" loading="lazy" />
+          )}
+          {(card.text || card.title) && (
+            <div class="card-body">
+              {card.title && <h2>{card.title}</h2>}
+              {card.text && <p>{card.text}</p>}
+              {card.meta && <p class="card-meta">{card.meta}</p>}
+              {card.link && <a href={card.link.href} target={external(card.link.href) ? '_blank' : undefined} rel={external(card.link.href) ? 'noreferrer' : undefined}>{card.link.label} <span aria-hidden="true">↗</span></a>}
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+    <div class="minimap" data-minimap aria-hidden="true">
+      <div class="minimap-world" data-minimap-world></div>
+      <div class="minimap-view" data-minimap-view></div>
+    </div>
+    <div class="cursor-hint" data-cursor-hint aria-hidden="true">Drag</div>
+  </section>
+</main>
+
+<footer class="bar" data-bar>
+  <span class="bar-size" data-viewport aria-hidden="true"></span>
+  <span class="bar-tag" data-tagline data-lines={JSON.stringify(taglines)}>{taglines[0]}</span>
+  <span class="bar-os" data-os aria-hidden="true"></span>
+  <span class="bar-clock" data-clock data-zone={site.timeZone} aria-hidden="true"></span>
+</footer>
+
+<aside class:list={['panel panel--portfolio', { 'is-open': panel === 'portfolio' }]} data-panel="portfolio" aria-labelledby="portfolio-title" tabindex="-1">
+  <div class="panel-inner" data-glass>
+    <div class="panel-top">
+      <h2 id="portfolio-title" class="panel-title">Portfolio</h2>
+      <span class="panel-count">{String(portfolioEntries.length).padStart(2, '0')}</span>
+    </div>
+    <ol class="works" role="list">
+      {portfolioEntries.map((entry, index) => (
+        <li class="work">
+          <details open={index === 0}>
+            <summary>
+              <span class="work-name">{entry.name}</span>
+              <span class="work-cat">{entry.category}</span>
+              {entry.year && <span class="work-year">{entry.year}</span>}
+            </summary>
+            <div class="work-body">
+              {entry.image && <Image src={entry.image.src} alt={entry.image.alt} widths={[480, 960]} sizes="30vw" format="webp" loading="lazy" />}
+              <p>{entry.summary}</p>
+              {entry.links.length > 0 && (
+                <p class="work-links">
+                  {entry.links.map((link) => <a class="chip" href={link.href} target={external(link.href) ? '_blank' : undefined} rel={external(link.href) ? 'noreferrer' : undefined}>{link.label}</a>)}
+                </p>
+              )}
+            </div>
+          </details>
+        </li>
+      ))}
+    </ol>
+    <button type="button" class="panel-board-link" data-open-board>Open the work board <span aria-hidden="true">→</span></button>
+  </div>
+</aside>
+
+<aside class:list={['panel panel--profile', { 'is-open': panel === 'profile' }]} data-panel="profile" aria-labelledby="profile-title" tabindex="-1">
+  <div class="panel-inner" data-glass>
+    <div class="panel-top">
+      <h2 id="profile-title" class="panel-title">Profile</h2>
+      <nav class="panel-links" aria-label="Contact">
+        {links.map((link) => <a class="chip" href={link.href} target={external(link.href) ? '_blank' : undefined} rel={external(link.href) ? 'noreferrer' : undefined}>{link.label}</a>)}
+      </nav>
+    </div>
+    <div class="prose">
+      {profile.paragraphs.map((text) => <p>{text}</p>)}
+    </div>
+    {sections.map(({ label, entries }) => (
+      <section class="cv-section">
+        <h3 class="cv-label">{label}</h3>
+        <ol class="cv-list" role="list">
+          {entries.map((entry) => (
+            <li class="cv-entry">
+              <p class="cv-meta"><span>{entry.period}</span>{entry.place && <span>{entry.place}</span>}</p>
+              <h4>{entry.title}</h4>
+              <p class="cv-org">{entry.organisation}</p>
+              {entry.paragraphs?.map((text) => <p>{text}</p>)}
+              {entry.points && <ul class="cv-points">{entry.points.map((point) => <li>{point}</li>)}</ul>}
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))}
+    <section class="cv-section">
+      <h3 class="cv-label">Skills</h3>
+      <dl class="cv-skills">
+        {profile.skills.map(({ label, items }) => (
+          <div><dt>{label}</dt><dd>{items.join(', ')}</dd></div>
+        ))}
+      </dl>
+    </section>
+  </div>
+</aside>
+
+<dialog class="lightbox" data-lightbox aria-label="Image">
+  <img data-lightbox-image alt="" />
+  <form method="dialog"><button class="pill" aria-label="Close image">✕</button></form>
+</dialog>
+
+<div class="terminal" data-terminal role="dialog" aria-label="Terminal" hidden>
+  <div class="terminal-head"><span>~/sanktjohanser</span><kbd>Esc</kbd></div>
+  <div class="terminal-out" data-terminal-out aria-live="polite"></div>
+  <form class="terminal-form" data-terminal-form>
+    <label for="terminal-input">$</label>
+    <input id="terminal-input" data-terminal-input autocomplete="off" autocapitalize="off" spellcheck="false" />
+  </form>
+</div>
+
+<script type="application/json" id="vs-data" set:html={JSON.stringify({
+  name: site.name,
+  role: role.join(' · '),
+  about: profile.paragraphs,
+  education: profile.education.map(({ period, title, organisation }) => ({ period, title, organisation })),
+  experience: profile.experience.map(({ period, title, organisation }) => ({ period, title, organisation })),
+  skills: profile.skills,
+  projects: portfolioEntries.map(({ name, category, links }) => ({ name, category, href: links[0]?.href })),
+  links,
+}).replace(/</g, '\\u003c')} />
+
+<script>
+  import '../../scripts/vs/main';
+</script>
