@@ -28,3 +28,12 @@ npm run preview
 - Instrument Serif and Instrument Sans are self-hosted with OFL licenses in [the font directory](src/assets/fonts).
 
 The homepage curtain is session-scoped. Same-origin cross-document View Transitions supply the gallery image expansion and its reverse where supported. Regular document navigation, native history, and direct case-study URLs remain available independently. Reduced motion skips the animated effects. Without JavaScript, the homepage links, chapter anchors, and links to original images remain usable.
+
+## Background atmosphere
+
+Tune the glow, grain, and print pattern independently for each theme at the top of [atmosphere.css](src/styles/atmosphere.css). Use `0%` to disable the glow or pattern and `0` to disable the grain. In the browser console, switch the whole treatment off or back on without reloading.
+
+```js
+document.documentElement.dataset.atmosphere = 'off';
+delete document.documentElement.dataset.atmosphere;
+```

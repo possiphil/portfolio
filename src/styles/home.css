@@ -141,11 +141,12 @@
 @keyframes milestone-in { from { transform: translateY(.4rem); } to { transform: none; } }
 
 .work-section {
+  --work-backdrop: linear-gradient(to bottom, transparent, var(--page) 6rem, var(--work) 74%);
   position: relative;
   z-index: 1;
   margin-block-start: -4.5rem;
   padding-block: clamp(5.25rem, 8vw, 7.5rem) clamp(6rem, 11vw, 10.5rem);
-  background: linear-gradient(to bottom, transparent, var(--page) 6rem, var(--work) 74%);
+  background: var(--work-backdrop);
 }
 .work-section .display-heading { margin-block-end: clamp(1.6rem, 3.3vw, 3rem); }
 
