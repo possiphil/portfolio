@@ -1,47 +1,46 @@
 ---
-import { Image } from 'astro:assets';
-import terrain from '../assets/terrain-study.webp';
-import type { projects } from '../content/portfolio';
+import type { Project } from '../content/portfolio';
+import Icon from './Icon.astro';
+import ProjectMedia from './ProjectMedia.astro';
 
 interface Props {
-  project: (typeof projects)[number];
+  project: Project;
+  next?: boolean;
 }
 
-const { project } = Astro.props;
+const { project, next = false } = Astro.props;
+const titleId = `card-${project.id}`;
+const note = project.cover?.kind === 'illustration' ? 'Concept illustration' : undefined;
+const descriptionIds = [project.category && `${titleId}-category`, note && `${titleId}-media`].filter(Boolean).join(' ');
 ---
 
-<article class:list={['project', { 'project-featured': project.id === 'genix' }]} id={project.id} aria-labelledby={`${project.id}-title`}>
-  {project.id === 'genix' && (
-    <figure class="project-figure" data-project-preview>
-      <div class="project-image">
-        <Image
-          src={terrain}
-          alt="A layered topographic study of a mountain ridge"
-          widths={[420, 680, 1040]}
-          sizes="(max-width: 51rem) calc(100vw - 2rem), 51vw"
-          format="webp"
-          loading="lazy"
-          decoding="async"
-        />
+<article class:list={['project-card', { 'next-card': next }]} data-slot={project.slot}>
+  {project.study ? (
+    <div class="card-surface card-ready">
+      <ProjectMedia media={project.cover} transition={!next ? project.id : undefined}
+        sizes="(max-width: 52rem) 92vw, 58vw" gallery={!next}
+        priority={!next && project.slot === 'featured' ? 'low' : undefined} />
+      {note && <span class="asset-note" id={`${titleId}-media`}>{note}</span>}
+      <div class="card-copy">
+        {project.category && <p class="card-meta" id={`${titleId}-category`}>{project.category}</p>}
+        <h3 id={titleId}>
+          <a class="card-link" href={`/work/${project.id}`} aria-describedby={descriptionIds || undefined}
+            data-project-link={!next ? project.id : undefined}>{project.name}</a>
+        </h3>
       </div>
-      <figcaption>Procedural terrain · Concept illustration</figcaption>
-    </figure>
-  )}
-  <div class="project-copy">
-    <p class="project-context">{project.context}</p>
-    <h3 class="display-heading" id={`${project.id}-title`}>{project.name}</h3>
-    <p class="project-title">{project.title}</p>
-    <p class="project-description">{project.description}</p>
-    <div class="project-actions">
-      <details class="project-drawer">
-        <summary>Project details <span class="disclosure-mark" aria-hidden="true"></span></summary>
-        <dl class="details project-specs">
-          {project.details.map(({ label, value }) => (
-            <div><dt>{label}</dt><dd>{value}</dd></div>
-          ))}
-        </dl>
-      </details>
-      {project.url && <a class="text-link" href={project.url}>Explore {project.name}</a>}
+      <span class="card-arrow"><Icon name="arrow-up-right" /></span>
     </div>
-  </div>
+  ) : (
+    <div class="card-surface card-pending">
+      <div class="card-copy">
+        <p class="card-meta">Case study pending</p>
+        <h3 id={titleId}>{project.name}</h3>
+      </div>
+    </div>
+  )}
+  {!next && project.study && project.cover?.video && (
+    <button type="button" class="icon-button preview-toggle" aria-label="Pause preview" data-loop-toggle hidden>
+      <Icon name="pause" /><Icon name="play" />
+    </button>
+  )}
 </article>

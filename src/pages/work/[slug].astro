@@ -1,0 +1,19 @@
+---
+import type { GetStaticPaths } from 'astro';
+import CaseStudy from '../../components/CaseStudy.astro';
+import { caseStudies, type CaseStudyProject } from '../../content/portfolio';
+
+export const getStaticPaths = (() => caseStudies.map((project, index) => ({
+  params: { slug: project.id },
+  props: { project, next: caseStudies[index + 1] },
+}))) satisfies GetStaticPaths;
+
+interface Props {
+  project: CaseStudyProject;
+  next?: CaseStudyProject;
+}
+
+const { project, next } = Astro.props;
+---
+
+<CaseStudy {project} {next} />

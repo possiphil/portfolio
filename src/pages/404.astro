@@ -1,12 +1,13 @@
 ---
+import Icon from '../components/Icon.astro';
 import { fullName } from '../content/portfolio';
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title={`Page not found | ${fullName}`} description="This page could not be found." notFound>
-  <main class="shell missing-page">
-    <p class="section-label">404</p>
-    <h1>Page not found</h1>
-    <a class="button button-primary" href="/">Return to portfolio</a>
+<BaseLayout title={`Page not found | ${fullName}`} description="This page could not be found." page="missing">
+  <main class="shell missing-page" id="main" tabindex="-1">
+    <p class="eyebrow">404</p>
+    <h1 class="display-heading">Page not found</h1>
+    <a class="editorial-link" href="/" data-home><Icon name="arrow-left" /> Return to portfolio</a>
   </main>
 </BaseLayout>

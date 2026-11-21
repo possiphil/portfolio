@@ -1,65 +1,98 @@
 ---
 import sansFont from '../assets/fonts/instrument-sans.woff2?url';
+import serifFont from '../assets/fonts/instrument-serif.woff2?url';
+import SiteHeader from '../components/SiteHeader.astro';
 import { fullName, portfolio } from '../content/portfolio';
 import '../styles/global.css';
+import '../styles/transitions.css';
 
 interface Props {
   title?: string;
   description?: string;
-  notFound?: boolean;
-  intro?: boolean;
+  page?: 'home' | 'project' | 'missing';
+  social?: { src: string; alt: string; width: number; height: number };
 }
 
 const {
-  title = `${fullName} | ${portfolio.role}`,
+  title = `${fullName} | Software Engineering`,
   description = portfolio.description,
-  notFound = false,
-  intro = false,
+  page = 'home',
+  social = { src: '/social-card.jpg', width: 1200, height: 630, alt: `Portrait of ${fullName}` },
 } = Astro.props;
-const canonical = Astro.site && new URL(Astro.url.pathname, Astro.site).href;
-const socialImage = Astro.site && new URL('/social-card.jpg', Astro.site).href;
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const canonical = Astro.site && new URL(pathname, Astro.site).href;
+const socialImage = Astro.site && new URL(social.src, Astro.site).href;
 ---
 
 <!doctype html>
-<html lang="en" id="top">
+<html lang="en" data-page={page}>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="color-scheme" content="dark light" />
-    <meta name="theme-color" content="#17171c" />
-    <script define:vars={{ intro }}>
+    <meta name="theme-color" content="#171717" />
+    <script define:vars={{ page }}>
       const root = document.documentElement;
 
-      // Restore the palette before the stylesheet or page can paint.
       try {
         if (localStorage.getItem('portfolio-theme') === 'light') {
           root.dataset.theme = 'light';
-          document.querySelector('meta[name="theme-color"]').content = '#f5f3ee';
+          document.querySelector('meta[name="theme-color"]').content = '#EFEAE2';
         }
       } catch {
-        // The default palette also works when storage is unavailable.
+        // The default palette works without storage.
       }
 
-      if (intro && !location.hash && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
-        try {
-          if (!localStorage.getItem('portfolio-portrait-intro')) {
-            localStorage.setItem('portfolio-portrait-intro', 'seen');
-            root.dataset.intro = '';
-          }
-        } catch {
-          // Show the steady-state hero when repeat visits cannot be detected.
+      try {
+        const firstPage = !sessionStorage.getItem('portfolio-visited');
+        sessionStorage.setItem('portfolio-visited', '1');
+        if (firstPage && page === 'home' && !location.hash
+          && performance.getEntriesByType('navigation')[0]?.type === 'navigate'
+          && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+          root.dataset.intro = '';
         }
+      } catch {
+        // Show the steady-state hero when session visits cannot be detected.
       }
+
+      if ('onpageswap' in window) {
+        const optIn = document.createElement('style');
+        optIn.textContent = '@media (prefers-reduced-motion: no-preference) { @view-transition { navigation: auto; } }';
+        document.head.append(optIn);
+      }
+
+      // pagereveal can run before a deferred module. Classify the motion before capture.
+      const configureRouteMotion = (transition, activation) => {
+        if (!transition) return;
+        void Promise.allSettled([transition.ready, transition.finished, transition.updateCallbackDone]);
+        if (activation?.navigationType !== 'push' || !activation.from?.url || !activation.entry.url) return;
+
+        const from = new URL(activation.from.url);
+        const to = new URL(activation.entry.url);
+        if (from.pathname !== '/' && to.pathname === '/' && !to.hash) {
+          transition.types?.add?.('home-return');
+        }
+      };
+
+      window.addEventListener('pageswap', (event) => configureRouteMotion(event.viewTransition, event.activation));
+      window.addEventListener('pagereveal', (event) => {
+        const activation = Reflect.get(window, 'navigation')?.activation;
+        const savedScroll = history.state?.galleryScroll;
+        if (page === 'home' && activation?.navigationType === 'traverse' && typeof savedScroll === 'number') {
+          window.scrollTo({ top: savedScroll, behavior: 'instant' });
+        }
+        configureRouteMotion(event.viewTransition, activation);
+      });
     </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={serifFont} as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="preload" href={sansFont} as="font" type="font/woff2" crossorigin="anonymous" />
-    <slot name="preload" />
-    {notFound ? <meta name="robots" content="noindex" /> : (
+    {page === 'missing' ? <meta name="robots" content="noindex" /> : (
       <>
         {canonical && <link rel="canonical" href={canonical} />}
-        <meta property="og:type" content="website" />
+        <meta property="og:type" content={page === 'project' ? 'article' : 'website'} />
         <meta property="og:site_name" content={fullName} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
@@ -67,15 +100,20 @@ const socialImage = Astro.site && new URL('/social-card.jpg', Astro.site).href;
         {socialImage && (
           <>
             <meta property="og:image" content={socialImage} />
-            <meta property="og:image:width" content="1200" />
-            <meta property="og:image:height" content="630" />
-            <meta property="og:image:alt" content={`${fullName}, ${portfolio.role}, with a monochrome portrait.`} />
+            <meta property="og:image:width" content={String(social.width)} />
+            <meta property="og:image:height" content={String(social.height)} />
+            <meta property="og:image:alt" content={social.alt} />
           </>
         )}
       </>
     )}
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <SiteHeader page={page} />
     <slot />
+    <script>
+      import '../scripts/site';
+    </script>
   </body>
 </html>

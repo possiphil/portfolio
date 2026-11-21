@@ -1,0 +1,55 @@
+---
+import { contact } from '../content/media';
+import Icon from './Icon.astro';
+
+interface Props {
+  page: 'home' | 'project' | 'missing';
+}
+
+const { page } = Astro.props;
+const sections = [
+  { id: 'work', label: 'Work' },
+  { id: 'about', label: 'About' },
+  { id: 'contact', label: 'Contact' },
+];
+---
+
+<header class="site-header" data-header data-on-media={page === 'project' ? '' : undefined}>
+  <div class="shell header-layout">
+    <a class="brand" href="/" aria-label="PS. Home" data-home>PS<span>.</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+      {sections.map(({ id, label }) => (
+        <a href={`/#${id}`} data-section={id} aria-current={page === 'project' && id === 'work' ? 'location' : undefined}>{label}</a>
+      ))}
+    </nav>
+    <div class="header-actions">
+      {contact.resume
+        ? <a class="resume-link" href={contact.resume} download>Résumé <Icon name="arrow-up-right" /></a>
+        : <span class="resume-link pending" role="link" aria-disabled="true" title="Résumé PDF pending">Résumé <Icon name="arrow-up-right" /><span class="sr-only"> (PDF pending)</span></span>}
+      <button class="icon-button theme-toggle" type="button" aria-label="Light theme" aria-pressed="false" title="Switch to light theme" data-theme-toggle hidden>
+        <Icon name="sun" /><Icon name="moon" />
+      </button>
+      <button class="icon-button menu-toggle" type="button" aria-label="Open menu" aria-haspopup="dialog" aria-controls="site-menu" aria-expanded="false" data-open-dialog="site-menu" hidden>
+        <Icon name="menu" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<dialog id="site-menu" class="site-menu" aria-labelledby="menu-title">
+  <div class="menu-header shell">
+    <a class="brand" href="/" aria-label="PS. Home" data-home>PS<span>.</span></a>
+    <h2 id="menu-title" class="sr-only">Main menu</h2>
+    <button class="icon-button" type="button" aria-label="Close menu" data-close-dialog autofocus><Icon name="close" /></button>
+  </div>
+  <div class="shell menu-content">
+    <nav aria-label="Main navigation">
+      {sections.map(({ id, label }) => (
+        <a href={`/#${id}`} data-section={id} aria-current={page === 'project' && id === 'work' ? 'location' : undefined}>{label}<Icon name="arrow-up-right" /></a>
+      ))}
+    </nav>
+    {contact.resume
+      ? <a class="editorial-link" href={contact.resume} download>Résumé <Icon name="arrow-up-right" /></a>
+      : <span class="editorial-link pending" role="link" aria-disabled="true">Résumé <span class="pending-note">PDF pending</span></span>}
+  </div>
+</dialog>

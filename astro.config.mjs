@@ -9,6 +9,7 @@ if (deployment?.hostname.endsWith('.pages.dev')) {
 
 export default defineConfig({
   output: 'static',
-  site: process.env.SITE_URL || deployment?.origin,
+  site: process.env.SITE_URL || deployment?.origin || 'https://sanktjohanser.dev',
+  trailingSlash: 'never',
   devToolbar: { enabled: false },
 });

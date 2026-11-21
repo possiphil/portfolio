@@ -1,0 +1,29 @@
+---
+import { Image } from 'astro:assets';
+import type { ProjectMedia } from '../content/media';
+
+interface Props {
+  media?: ProjectMedia;
+  transition?: string;
+  sizes: string;
+  priority?: 'high' | 'low';
+  gallery?: boolean;
+}
+
+const { media, transition, sizes, priority, gallery } = Astro.props;
+---
+
+<div class:list={['project-art', { 'is-illustration': media?.kind === 'illustration', 'is-render': media?.kind === 'render' }]}
+  data-morph-art={transition}
+  style={{ '--art-position': media?.position, '--morph-name': transition ? `portfolio-${transition}` : undefined }}>
+  {media && (
+    <>
+      <Image src={media.image} alt={media.alt} widths={[360, 560, 800, 1040, 1440]}
+        sizes={sizes} format="webp" quality={82} loading={priority ? 'eager' : 'lazy'}
+        fetchpriority={priority} decoding="async" />
+      {gallery && media.video && (
+        <video data-loop={media.video} muted playsinline loop preload="none" aria-hidden="true"></video>
+      )}
+    </>
+  )}
+</div>

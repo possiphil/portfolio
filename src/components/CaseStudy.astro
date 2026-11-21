@@ -1,0 +1,145 @@
+---
+import { getImage } from 'astro:assets';
+import type { CaseStudyProject } from '../content/portfolio';
+import { fullName } from '../content/portfolio';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ChapterVisual from './ChapterVisual.astro';
+import Icon from './Icon.astro';
+import ProjectCard from './ProjectCard.astro';
+import ProjectMedia from './ProjectMedia.astro';
+import '../styles/work.css';
+
+interface Props {
+  project: CaseStudyProject;
+  next?: CaseStudyProject;
+}
+
+const { project, next } = Astro.props;
+const { chapters, facts, links, outcomes, summary } = project.study;
+const shareImage = project.cover && await getImage({ src: project.cover.image, width: 1040, height: 546, fit: 'cover', format: 'jpeg', quality: 84 });
+const social = shareImage && project.cover && { src: shareImage.src, alt: project.cover.alt, width: 1040, height: 546 };
+---
+
+<BaseLayout title={`${project.name} | ${fullName}`} description={summary} page="project" social={social}>
+  <main class="case-study" id="main" tabindex="-1">
+    <section class="showcase" aria-labelledby="showcase-title">
+      <ProjectMedia media={project.cover} transition={project.id} sizes="100vw" priority="high" />
+      <div class="showcase-layout shell">
+        <a class="editorial-link back-link" href="/#work" data-back-projects><Icon name="arrow-left" /> Back to projects</a>
+        <div class="showcase-copy">
+          {project.category && <p class="eyebrow">{project.category}</p>}
+          <h1 id="showcase-title">{project.name}</h1>
+          <p class="showcase-summary">{summary}</p>
+        </div>
+        {project.cover?.kind === 'illustration' && <span class="asset-note">Concept illustration</span>}
+      </div>
+    </section>
+
+    <div class="case-facts shell">
+      <dl>
+        {facts.map(({ label, value }) => (
+          <div><dt class="eyebrow">{label}</dt><dd>{value}</dd></div>
+        ))}
+      </dl>
+      {links && links.length > 0 && (
+        <ul class="case-links" role="list">
+          {links.map(({ label, href }) => <li><a class="editorial-link" href={href}>{label} <Icon name="arrow-up-right" /></a></li>)}
+        </ul>
+      )}
+    </div>
+
+    <section class="story" aria-label="Engineering story" data-story>
+      <nav class="chapter-index" aria-label="Chapters">
+        <div class="shell">
+          {chapters.map(({ id, label }, index) => (
+            <a href={`#${id}`} aria-current={index === 0 ? 'location' : undefined} data-scroll-link data-chapter-link={id}>{label}</a>
+          ))}
+        </div>
+      </nav>
+      <div class="story-body shell">
+        <div class="chapter-flow">
+          {chapters.map((chapter) => (
+            <section id={chapter.id} class="chapter" data-side={chapter.side} tabindex="-1" aria-labelledby={`${chapter.id}-heading`}>
+              <div class="chapter-intro">
+                <p class="eyebrow">{chapter.label}</p>
+                <h2 class="display-heading" id={`${chapter.id}-heading`}>{chapter.title}</h2>
+                <p>{chapter.intro}</p>
+              </div>
+              <div class="chapter-inline"><ChapterVisual chapter={chapter} /></div>
+              <div class="chapter-detail">
+                <p>{chapter.detail}</p>
+                {chapter.pseudocode && (
+                  <div class="chapter-code">
+                    <p class="eyebrow">Pseudocode</p>
+                    <pre><code>{chapter.pseudocode}</code></pre>
+                  </div>
+                )}
+              </div>
+            </section>
+          ))}
+        </div>
+        <div class="story-stage" hidden>
+          {chapters.map((chapter) => (
+            <div class="story-visual" data-visual={chapter.id} data-side={chapter.side} inert>
+              <ChapterVisual chapter={chapter} />
+            </div>
+          ))}
+        </div>
+      </div>
+      <button class="chapter-toggle" type="button" aria-haspopup="dialog" aria-controls="chapter-sheet"
+        aria-expanded="false" data-open-dialog="chapter-sheet" hidden>
+        <span>Chapters</span><strong data-chapter-label>{chapters[0]?.label}</strong><Icon name="chevron-up" />
+      </button>
+    </section>
+
+    <section class="outcomes shell section-layout" aria-labelledby="outcomes-heading">
+      <h2 class="eyebrow section-kicker" id="outcomes-heading">What came out of it</h2>
+      <ul role="list">
+        {outcomes.map((outcome) => <li>{outcome}</li>)}
+      </ul>
+    </section>
+
+    <footer class="case-footer shell">
+      {next && (
+        <section class="next-project" aria-labelledby="next-heading">
+          <h2 class="eyebrow" id="next-heading">Next project</h2>
+          <ProjectCard project={next} next />
+        </section>
+      )}
+      <a class="editorial-link back-link" href="/#work" data-back-projects><Icon name="arrow-left" /> Back to projects</a>
+    </footer>
+  </main>
+
+  <dialog id="chapter-sheet" class="chapter-sheet" aria-labelledby="chapter-sheet-title">
+    <div class="sheet-heading" data-sheet-drag>
+      <span class="sheet-handle" aria-hidden="true"></span>
+      <h2 id="chapter-sheet-title">Chapters</h2>
+      <button class="icon-button" type="button" aria-label="Close chapters" data-close-dialog autofocus><Icon name="close" /></button>
+    </div>
+    <nav aria-label="Chapters">
+      {chapters.map(({ id, label }) => (
+        <a href={`#${id}`} data-scroll-link data-chapter-link={id}>{label} <Icon name="arrow-up-right" /></a>
+      ))}
+    </nav>
+  </dialog>
+
+  <dialog id="image-viewer" class="image-viewer" aria-labelledby="viewer-title">
+    <div class="viewer-toolbar">
+      <h2 id="viewer-title">Image viewer</h2>
+      <div class="viewer-controls" role="group" aria-label="Image zoom">
+        <button class="icon-button" type="button" aria-label="Zoom out" data-zoom-out><Icon name="minus" /></button>
+        <button class="zoom-reset" type="button" aria-label="Fit image" data-zoom-reset>Fit</button>
+        <button class="icon-button" type="button" aria-label="Zoom in" data-zoom-in><Icon name="plus" /></button>
+        <span class="sr-only" aria-live="polite" data-zoom-status></span>
+      </div>
+      <button class="icon-button" type="button" aria-label="Close image viewer" data-close-dialog autofocus><Icon name="close" /></button>
+    </div>
+    <div class="viewer-pan" data-view-pan tabindex="0" role="region" aria-label="Image preview, scroll to pan when zoomed">
+      <div class="viewer-image" data-view-file></div>
+    </div>
+  </dialog>
+
+  <script>
+    import '../scripts/story';
+  </script>
+</BaseLayout>

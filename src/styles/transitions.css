@@ -1,0 +1,40 @@
+@media (prefers-reduced-motion: no-preference) {
+  [data-morph-art] { view-transition-name: var(--morph-name); }
+  .showcase-copy { view-transition-name: showcase-copy; }
+
+  ::view-transition { pointer-events: none; }
+  ::view-transition-group(*) { animation-duration: .64s; animation-timing-function: var(--ease-swipe); }
+  ::view-transition-group(root) { animation-duration: .38s; }
+  ::view-transition-old(root) { animation: route-out .27s ease both; }
+  ::view-transition-new(root) { animation: route-in .38s ease both; }
+  ::view-transition-old(showcase-copy) { animation: route-out .16s ease both; }
+  ::view-transition-new(showcase-copy) { animation: reveal-showcase .51s var(--ease) .31s both; }
+
+  :root:is([data-circle], :active-view-transition-type(home-return)) [data-morph-art],
+  :root:is([data-circle], :active-view-transition-type(home-return)) .showcase-copy {
+    view-transition-name: none;
+  }
+
+  :root:is([data-circle], :active-view-transition-type(home-return))::view-transition-group(root) {
+    animation-duration: .47s;
+  }
+  :root:is([data-circle], :active-view-transition-type(home-return))::view-transition-old(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+  :root:is([data-circle], :active-view-transition-type(home-return))::view-transition-new(root) {
+    animation: circular-reveal .47s var(--ease-swipe) both;
+    mix-blend-mode: normal;
+  }
+
+  @keyframes route-out { to { opacity: 0; } }
+  @keyframes route-in { from { opacity: 0; } }
+  @keyframes reveal-showcase {
+    from { opacity: 0; transform: translateY(1.3rem); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes circular-reveal {
+    from { clip-path: circle(0 at var(--reveal-x, var(--gutter)) var(--reveal-y, calc(var(--header) / 2))); }
+    to { clip-path: circle(var(--reveal-radius, 150vmax) at var(--reveal-x, var(--gutter)) var(--reveal-y, calc(var(--header) / 2))); }
+  }
+}
